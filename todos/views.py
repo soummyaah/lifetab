@@ -33,11 +33,11 @@ class AjaxableResponseMixin(object):
 	def build_return_data(self):
 		pass
 
-class TodoCr(View):
+class TodoCreate(View):
 	def get(self, request):
 		return HttpResponse('Fetched via get')
 	def post(self, request):
-		if True:#request.is_ajax():
+		if request.is_ajax():
 			form = AddTodoForm(request.POST)
 			if form.is_valid():
 				from datetime import datetime
@@ -52,25 +52,6 @@ class TodoCr(View):
 				'errors': 'AJAX not used',
 			}
 			return HttpResponse(JsonResponse(data))
-
-
-
-class TodoCreate(AjaxableResponseMixin, CreateView):
-	model = Todo
-	form_class = 'AddTodoForm'
-	template_name = 'nothing.html'
-
-	def build_return_data(self):
-		todo = self.object
-		data = {}
-		data['id'] = todo.pk
-		data['title'] = todo.title
-		data['notes'] = todo.notes
-		data['done'] = todo.done
-		data['due'] = todo.due
-		data['message'] = 'Created Successfully'
-		return data
-
 
 class TodoUpdate(AjaxableResponseMixin, UpdateView):
 	model = Todo
@@ -103,14 +84,25 @@ class TodoList(AjaxableResponseMixin, ListView):
 	model = Todo
 	template_name = 'nothing.html'
 
-class TodoListToday(AjaxableResponseMixin, ListView):
-	model = Todo
-	template_name = 'nothing.html'
+class TodoListToday(View):
 
-	def get_queryset(self):
-		import datetime
-		yesterday = datetime.date.today() - datetime.timedelta(days=1)
-		return Todo.objects.filter(due__gt=yesterday)
+	def post(self, request):
+		if request.is_ajax():
+			import datetime
+			yesterday = datetime.date.today() - datetime.timedelta(days=1)
+			todo_objs = Todo.objects.filter(due__gt=yesterday)
+			response = {'message': 'Today\'s Stuff'}
+			response_data = {}
+			for todo_obj in todo_objs:
+				todo_data = {'title': todo_obj.title, 'notes': todo_obj.notes}
+				response_data.append(todo_data)
+			response['data'] = response_data
+			return JsonResponse(response)
+		else:
+			data = {
+				'errors': 'AJAX not used',
+			}
+			return HttpResponse(JsonResponse(data))
 
 class TodoListFuture(AjaxableResponseMixin, ListView):
 	model = Todo
@@ -126,16 +118,18 @@ class TodoDetail(AjaxableResponseMixin, DetailView):
 	model = Todo
 	template_name = 'nothing.html'
 
-class TodoDone(View):
-	model = Todo
-	template_name = 'nothing.html'
 
+class TodoDone(View):
 	def post(self, request):
-		try:
-			pk = request.POST['id']
-			todo = Todo.objects.get(pk=pk)
-			data = {'message': 'Done',}
-			return JsonResponse(data)
-		except Todo.DoesNotExist:
-			error = { 'error': 'That todo does not exist',}
-			return JsonResponse(error)
+		if request.is_ajax()
+			try:
+				pk = request.POST['id']
+				todo = Todo.objects.get(pk=pk)
+				todo.delete()
+				data = {'message': 'Done',}
+				return JsonResponse(data)
+			except Todo.DoesNotExist:
+				error = { 'error': 'That todo does not exist',}
+				return JsonResponse(error)
+		else:
+			return JsonResponse({'error': 'Not fetched by AJAX'})
