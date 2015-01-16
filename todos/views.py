@@ -32,7 +32,7 @@ class AjaxableResponseMixin(object):
 
 class TodoCreate(AjaxableResponseMixin, CreateView):
 	model = Todo
-
+	template_name = 'nothing.html'
 	def build_return_data(self):
 		todo = self.object
 		data = {}
@@ -47,6 +47,7 @@ class TodoCreate(AjaxableResponseMixin, CreateView):
 
 class TodoUpdate(AjaxableResponseMixin, UpdateView):
 	model = Todo
+	template_name = 'nothing.html'
 
 	def build_return_data(self):
 		todo = self.object
@@ -62,6 +63,7 @@ class TodoUpdate(AjaxableResponseMixin, UpdateView):
 
 class TodoDelete(AjaxableResponseMixin, DeleteView):
 	model = Todo
+	template_name = 'nothing.html'
 
 	def build_return_data(self):
 		todo = self.object
@@ -71,9 +73,11 @@ class TodoDelete(AjaxableResponseMixin, DeleteView):
 
 class TodoList(AjaxableResponseMixin, ListView):
 	model = Todo
+	template_name = 'nothing.html'
 
 class TodoListToday(AjaxableResponseMixin, ListView):
 	model = Todo
+	template_name = 'nothing.html'
 
 	def get_queryset(self):
 		import datetime
@@ -82,6 +86,7 @@ class TodoListToday(AjaxableResponseMixin, ListView):
 
 class TodoListFuture(AjaxableResponseMixin, ListView):
 	model = Todo
+	template_name = 'nothing.html'
 
 	def get_queryset(self):
 		import datetime
@@ -91,9 +96,11 @@ class TodoListFuture(AjaxableResponseMixin, ListView):
 
 class TodoDetail(AjaxableResponseMixin, DetailView):
 	model = Todo
+	template_name = 'nothing.html'
 
 class TodoDone(View):
 	model = Todo
+	template_name = 'nothing.html'
 
 	def post(self, request):
 		try:
