@@ -48,7 +48,16 @@ class TodoList(AjaxableResponseMixin, ListView):
 class TodoListToday(AjaxableResponseMixin, ListView):
 	model = Todo
 	def get_queryset(self):
-		return Todo.objects.filter()
+		import datetime
+		yesterday = datetime.date.today() - datetime.timedelta(days=1)
+		return Todo.objects.filter(due__gt=yesterday)
+
+class TodoListFuture(AjaxableResponseMixin, ListView):
+	model = Todo
+	def get_queryset(self):
+		import datetime
+		today = datetime.date.today()
+		return Todo.objects.filter(due__gte=today)
 
 
 class TodoDetail(AjaxableResponseMixin, DetailView):
