@@ -5,26 +5,23 @@
 {% if user and not user.is_anonymous %}
 <script> 
         // wait for the DOM to be loaded 
-        $(document).ready(function() {
+        $(function() {
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
             		alert('Your todo has been created!');
-            	}
+                    var title = response.title;
+                    var todoid = response.id;
+                    var data = '<li class="rest"><form action="/todo/done" method="post"><input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+title+'</label></form></li>';
+                    $('#today-ul').prepend(data);
+            	},
             }); 
         }); 
     </script> 
  <div id="wrapper">
  	<div id="header">
  		<div id="logout-button">
- 			<!-- <ul>
-   				  <li>
-			       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
-			     </li>
-			     <li> -->
-			       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
-			     <!-- </li>
-			    </ul> -->
+            <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
  		</div>
  	</div>
  	<div id="left-section">
@@ -32,14 +29,14 @@
  			<div class="heading">
  				Today
  			</div>
+            <div class="li-header">
+                <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                {% csrf_token %}
+                    <input type="text" name="title"/><br>
+                    <input type="submit" style="display:none">
+                </form>
+            </div>
  			<ul id="today-ul">
- 				<li class="li-header">
- 					<form action="{% url 'todo:create' %}" id="today-create">
- 						<input type="text"/><br>
- 						<input type="submit" style="display:none">
- 					</form>
- 				</li>
- 				
  				<li class="rest">
  					<form >
  						<input type="submit" value="check"/>

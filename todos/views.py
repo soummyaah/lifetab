@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import View, ListView, DetailView
+from django.http import HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse, reverse_lazy
 from models import Todo
+from forms import AddTodoForm
 
 class AjaxableResponseMixin(object):
 
@@ -31,9 +33,33 @@ class AjaxableResponseMixin(object):
 	def build_return_data(self):
 		pass
 
+class TodoCr(View):
+	def get(self, request):
+		return HttpResponse('Fetched via get')
+	def post(self, request):
+		if True:#request.is_ajax():
+			form = AddTodoForm(request.POST)
+			if form.is_valid():
+				from datetime import datetime
+				todo = Todo(title=form.cleaned_data['title'], notes=form.cleaned_data['notes'])
+				todo.save()
+				data = {'message': 'Saved Successfully','id': todo.pk, 'title': todo.title, 'notes': todo.notes}
+				return JsonResponse(data)
+			else:
+				return JsonResponse(form.errors)
+		else:
+			data = {
+				'errors': 'AJAX not used',
+			}
+			return HttpResponse(JsonResponse(data))
+
+
+
 class TodoCreate(AjaxableResponseMixin, CreateView):
 	model = Todo
+	form_class = 'AddTodoForm'
 	template_name = 'nothing.html'
+
 	def build_return_data(self):
 		todo = self.object
 		data = {}
@@ -48,6 +74,7 @@ class TodoCreate(AjaxableResponseMixin, CreateView):
 
 class TodoUpdate(AjaxableResponseMixin, UpdateView):
 	model = Todo
+	form_class = 'AddTodoForm'
 	template_name = 'nothing.html'
 
 	def build_return_data(self):
