@@ -86,7 +86,7 @@ class TodoList(AjaxableResponseMixin, ListView):
 
 class TodoListToday(View):
 
-	def post(self, request):
+	def get(self, request):
 		if request.is_ajax():
 			import datetime
 			yesterday = datetime.date.today() - datetime.timedelta(days=1)
@@ -121,7 +121,7 @@ class TodoDetail(AjaxableResponseMixin, DetailView):
 
 class TodoDone(View):
 	def post(self, request):
-		if request.is_ajax()
+		if request.is_ajax():
 			try:
 				pk = request.POST['id']
 				todo = Todo.objects.get(pk=pk)

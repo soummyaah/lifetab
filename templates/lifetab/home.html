@@ -15,7 +15,20 @@
                     var data = '<li class="rest"><form action="/todo/done" method="post"><input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+title+'</label></form></li>';
                     $('#today-ul').prepend(data);
             	},
-            }); 
+            });
+
+
+
+            // fetch today's stuff
+            $.get({
+                url: 'todo/today',
+                success: function(response){
+                    alert('Fetched stuff!');
+                    alert(response.message);
+                },
+            })
+
+            // fetch other things
         }); 
     </script> 
  <div id="wrapper">
@@ -74,7 +87,7 @@
 				</form>
  		</div>
  		<div id = "clock">
- 			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
+ 			<!-- <iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe> -->
 
 
  		</div>
