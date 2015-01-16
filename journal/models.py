@@ -14,6 +14,6 @@ class Entry(TimeStampedModel):
 	title = models.CharField(max_length=2000)
 	content = models.CharField(max_length=100000)
 	
-	feeling = models.ChoiceField(max_length=4,
+	feeling = models.CharField(max_length=4,
 								choices=FEELING_CHOICES,
 								default='HAPP')
