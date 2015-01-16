@@ -4,29 +4,49 @@
 
 {% if user and not user.is_anonymous %}
 <script> 
+        function attachgetlisteners(item){
+            $(item).ajaxForm({
+                success: function(response){
+                    // alert('item deleted!');
+                    $(item).fadeOut('slow');
+                },
+            });
+        }
         // wait for the DOM to be loaded 
         $(function() {
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
-            		alert('Your todo has been created!');
+            		//alert('Your todo has been created!');
                     var title = response.title;
                     var todoid = response.id;
-                    var data = '<li class="rest"><form action="/todo/done" method="post"><input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+title+'</label></form></li>';
+                    var data = '<li class="rest"><form action="/todo/done" method="post">' + "{% csrf_token %}" + '<input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+ todoid + ":" + title+'</label></form></li>';
                     $('#today-ul').prepend(data);
+                    $('#today-ul li:first').css({'display':'none'}).fadeIn();
+                    $('#newtodo').val('');
             	},
             });
 
 
 
             // fetch today's stuff
-            $.get({
-                url: 'todo/today',
-                success: function(response){
-                    alert('Fetched stuff!');
-                    alert(response.message);
-                },
-            })
+            $.get('/todo/today').done(function(response){
+                                    var block = $('#today-ul');
+                                    block.html('');
+                                    var len = response.data.length;
+                                    for(var i=0; i<len; i++){
+                                        todoid = response.data[i].id;
+                                        title = response.data[i].title;
+                                        block.append('<li class="rest"><form action="/todo/done" method="post">' + "{% csrf_token %}" + '<input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+ todoid + ":" +title+'</label></form></li>');
+
+                                    }
+                                    var items = $('.rest');
+                                    for(var i=0; i<items.length; i++){
+                                        attachgetlisteners(items[i]);
+                                    }
+                                });
+            
+
 
             // fetch other things
         }); 
@@ -45,20 +65,13 @@
             <div class="li-header">
                 <form action="{% url 'todo:create' %}" id="today-create" method="post">
                 {% csrf_token %}
-                    <input type="text" name="title"/><br>
+                    <input type="text" name="title" id="newtodo"/><br>
                     <input type="submit" style="display:none">
                 </form>
             </div>
- 			<ul id="today-ul">
- 				<li class="rest">
- 					<form >
- 						<input type="submit" value="check"/>
- 							<input type="hidden"/>
- 						Some random text from the today database:)
- 					</form>
- 				</li>
- 				
- 			</ul>
+            <ul id="today-ul">
+     			Loading...
+     		</ul>
  		</div>
  		<div id="future-box">
  			<div class="heading">

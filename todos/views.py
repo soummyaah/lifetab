@@ -90,11 +90,11 @@ class TodoListToday(View):
 		if request.is_ajax():
 			import datetime
 			yesterday = datetime.date.today() - datetime.timedelta(days=1)
-			todo_objs = Todo.objects.filter(due__gt=yesterday)
+			todo_objs = Todo.objects.filter(due__gt=yesterday).order_by('-modified')
 			response = {'message': 'Today\'s Stuff'}
-			response_data = {}
+			response_data = []
 			for todo_obj in todo_objs:
-				todo_data = {'title': todo_obj.title, 'notes': todo_obj.notes}
+				todo_data = {'title': todo_obj.title, 'notes': todo_obj.notes, 'id': todo_obj.pk}
 				response_data.append(todo_data)
 			response['data'] = response_data
 			return JsonResponse(response)
