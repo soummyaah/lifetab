@@ -103,6 +103,14 @@
 	     <li>
 	       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
 	     </li>
+         <li>
+            <form action="/login" method="post">Use normal login
+            {% csrf_token %}
+                <input type="text" name="username"/>
+                <input type="password" name="password"/>
+                <input type="submit" value="Login"/>
+            </form>
+        </li>
      </ul>
    {% endif %}
    
