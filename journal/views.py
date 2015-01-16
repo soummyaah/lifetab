@@ -35,6 +35,7 @@ class AjaxableResponseMixin(object):
 
 class EntryCreate(AjaxableResponseMixin, CreateView):
 	model = Entry
+	template_name = 'nothing.html'
 
 	def build_return_data(self):
 		entry = self.object
@@ -48,6 +49,7 @@ class EntryCreate(AjaxableResponseMixin, CreateView):
 
 class EntryUpdate(AjaxableResponseMixin, UpdateView):
 	model = Entry
+	template_name = 'nothing.html'
 
 	def build_return_data(self):
 		entry = self.object
@@ -61,6 +63,7 @@ class EntryUpdate(AjaxableResponseMixin, UpdateView):
 
 class EntryDelete(AjaxableResponseMixin, DeleteView):
 	model = Entry
+	template_name = 'nothing.html'
 
 	def build_return_data(self):
 		entry = self.object
@@ -70,6 +73,8 @@ class EntryDelete(AjaxableResponseMixin, DeleteView):
 
 class EntryList(AjaxableResponseMixin, ListView):
 	model = Entry
+	template_name = 'nothing.html'
 
 class EntryDetail(AjaxableResponseMixin, DetailView):
 	model = Entry
+	template_name = 'nothing.html'
