@@ -3,6 +3,7 @@ from django.template.context import RequestContext
 
 def home(request):
    context = RequestContext(request,
-                           {'user': request.user})
+   							{'request': request,
+                           'user': request.user})
    return render_to_response('lifetab/home.html',
                              context_instance=context)
