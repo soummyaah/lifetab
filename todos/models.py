@@ -6,4 +6,3 @@ class Todo(TimeStampedModel):
 	notes = models.CharField(max_length=5000)
 
 	due = models.DateTimeField(auto_now=True)
-	done = models.BooleanField(default=False)
