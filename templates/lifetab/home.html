@@ -1,25 +1,99 @@
 {% extends 'lifetab/base.html' %}
 
 {% block main %}
- <div>
- <h1>Third-party authentication demo</h1>
 
+{% if user and not user.is_anonymous %}
+ <div id="wrapper">
+ 	<div id="header">
+ 		<div id="logout-button">
+ 			<!-- <ul>
+   				  <li>
+			       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+			     </li>
+			     <li> -->
+			       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+			     <!-- </li>
+			    </ul> -->
+ 		</div>
+ 	</div>
+ 	<div id="left-section">
+ 		<div id="today-box">
+ 			<div class="heading">
+ 				Today
+ 			</div>
+ 			<ul id="today-ul">
+ 				<li class="li-header">
+ 					<form>
+ 						<input type="text"/><br>
+ 					</form>
+ 				</li>
+ 				
+ 				<li class="rest">
+ 					<form >
+ 						<input type="submit" value="check"/>
+ 						<input type="hidden"/>
+ 						Some random text from the today database:)
+ 					</form>
+ 				</li>
+ 				
+ 			</ul>
+ 		</div>
+ 		<div id="future-box">
+ 			<div class="heading">
+ 				Future
+ 			</div>
+ 			<ul id="future-ul">
+ 				<li class="li-header">
+ 					<form>
+ 						<input type="text"/><br>
+ 					</form>
+ 				</li>
+ 				<li class="rest">
+ 					<form >
+ 						<input type="submit" value="check"/>
+ 						<input type="hidden"/>
+ 						Some random text from the future database:)
+ 					</form>
+ 				</li>
+ 			</ul>
+ 		</div>
+ 	</div>
+ 	<div id="center-section">
+ 		<div id = "google-search">
+				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
+		        	<input type="text" class="tftextinput" name="q" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
+				</form>
+ 		</div>
+ 		<div id = "clock">
+ 			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
+
+
+ 		</div>
+ 	</div>
+ 	<div id="right-section">
+ 		<div id="add-journal">
+ 			<form>
+ 				<textarea rows="8" cols="40" name="new-journal" placeholder="Write your journal here :)"></textarea><br>
+ 				<input type="submit" value="Yes, I want a new journal :D">
+ 			</form>
+ 		</div>
+ 		<div id="your-journal">
+ 			<form>
+ 				<input type="submit" value="Make me a new journal">
+ 			</form>
+ 		</div>
+ 	</div>
+ </div>
  <p>
-   <ul>
-   {% if user and not user.is_anonymous %}
-     <li>
-       <a>Hello {{ user.get_full_name|default:user.username }}!</a>
-     </li>
-     <li>
-       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
-     </li>
+  
    {% else %}
-     
-     <li>
-       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
-     </li>
+    <ul> 
+	     <li>
+	       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
+	     </li>
+     </ul>
    {% endif %}
-   </ul>
+   
  </p>
  </div>
 {% endblock %}
