@@ -25,28 +25,59 @@ class AjaxableResponseMixin(object):
         # call form.save() for example).
         response = super(AjaxableResponseMixin, self).form_valid(form)
         if self.request.is_ajax() and self.request.method == 'POST':
-            data = {
-                'pk': self.object.pk,
-            }
+        	data = build_return_data()
             return JsonResponse(response)
         else:
             return JsonResponse(ajaxerror)
 
+     def build_return_data(self):
+     	pass
+
 class TodoCreate(AjaxableResponseMixin, CreateView):
 	model = Todo
+
+	def build_return_data(self):
+		todo = self.object
+		data = {}
+		data['id'] = todo.pk
+		data['title'] = todo.title
+		data['notes'] = todo.notes
+		data['done'] = todo.done
+		data['due'] = todo.due
+		data['message'] = 'Created Successfully'
+		return data
+
 
 class TodoUpdate(AjaxableResponseMixin, UpdateView):
 	model = Todo
 
+	def build_return_data(self):
+		todo = self.object
+		data = {}
+		data['id'] = todo.pk
+		data['title'] = todo.title
+		data['notes'] = todo.notes
+		data['done'] = todo.done
+		data['due'] = todo.due
+		data['message'] = 'Saved Successfully'
+		return data
+
+
 class TodoDelete(AjaxableResponseMixin, DeleteView):
 	model = Todo
 
+	def build_return_data(self):
+		todo = self.object
+		data = {'message': 'Deleted Successfully'}
+
+		return data
 
 class TodoList(AjaxableResponseMixin, ListView):
 	model = Todo
 
 class TodoListToday(AjaxableResponseMixin, ListView):
 	model = Todo
+
 	def get_queryset(self):
 		import datetime
 		yesterday = datetime.date.today() - datetime.timedelta(days=1)
@@ -54,6 +85,7 @@ class TodoListToday(AjaxableResponseMixin, ListView):
 
 class TodoListFuture(AjaxableResponseMixin, ListView):
 	model = Todo
+
 	def get_queryset(self):
 		import datetime
 		today = datetime.date.today()
@@ -70,9 +102,8 @@ class TodoDone(View):
 		try:
 			pk = request.POST['id']
 			todo = Todo.objects.get(pk=pk)
-			return JsonResponse()
+			data = {'message': 'Done',}
+			return JsonResponse(data)
 		except Todo.DoesNotExist:
-			error = {
-				'error': 'That todo does not exist',
-			}
+			error = { 'error': 'That todo does not exist',}
 			return JsonResponse(error)

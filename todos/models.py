@@ -7,4 +7,3 @@ class Todo(TimeStampedModel):
 
 	due = models.DateTimeField(auto_now=True)
 	done = models.BooleanField(default=False)
-	archived = models.BooleanField(default=False)
