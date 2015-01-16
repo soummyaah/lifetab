@@ -62,3 +62,17 @@ class TodoListFuture(AjaxableResponseMixin, ListView):
 
 class TodoDetail(AjaxableResponseMixin, DetailView):
 	model = Todo
+
+class TodoDone(View):
+	model = Todo
+
+	def post(self, request):
+		try:
+			pk = request.POST['id']
+			todo = Todo.objects.get(pk=pk)
+			return JsonResponse()
+		except Todo.DoesNotExist:
+			error = {
+				'error': 'That todo does not exist',
+			}
+			return JsonResponse(error)

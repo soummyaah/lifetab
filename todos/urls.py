@@ -3,10 +3,10 @@ from views import *
 
 
 urlpatterns = patterns('',
-	url(r'^create', , name="create"),
-	url(r'^edit', , name="edit"),
-	url(r'^delete', , name="delete"),
-	url(r'^done', , name="done"),
-	url(r'^today', , name="today"),
-	url(r'^future', , name="future"),
+	url(r'^create', TodoCreate.as_view(), name="create"),
+	url(r'^edit', TodoUpdate.as_view(), name="edit"),
+	url(r'^delete', TodoDelete.as_view(), name="delete"),
+	url(r'^done', TodoDone, name="done"),
+	url(r'^today', TodoCreate.as_view(), name="today"),
+	url(r'^future', TodoCreate.as_view(), name="future"),
 )

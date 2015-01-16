@@ -3,10 +3,9 @@ from views import *
 
 
 urlpatterns = patterns('',
-	url(r'^create', , name="create"),
-	url(r'^edit', , name="edit"),
-	url(r'^delete', , name="delete"),
-	url(r'^list', , name="list"),
-	url(r'^archived', , name="future"),
-	url(r'^show/(?<pk>[0-9]+)', , name="future"),
+	url(r'^create', EntryCreate.as_view(), name="create"),
+	url(r'^edit', EntryEdit.as_view(), name="edit"),
+	url(r'^delete', EntryDelete.as_view(), name="delete"),
+	url(r'^list', EntryList.as_view(), name="list"),
+	url(r'^show', EntryDetail.as_view(), name="future"),
 )
