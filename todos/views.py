@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from models import Todo
 
 class AjaxableResponseMixin(object):
+
 	"""
 	Mixin to add AJAX support to a form.
 	Must be used with an object-based FormView (e.g. CreateView)
