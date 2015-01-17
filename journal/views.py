@@ -25,23 +25,48 @@ class AjaxableResponseMixin(object):
         # call form.save() for example).
         response = super(AjaxableResponseMixin, self).form_valid(form)
         if self.request.is_ajax() and self.request.method == 'POST':
-            data = {
-                'pk': self.object.pk,
-            }
+            data = build_return_data()
             return JsonResponse(response)
         else:
             return JsonResponse(ajaxerror)
 
+    def build_return_data(self):
+        pass
 
 class EntryCreate(AjaxableResponseMixin, CreateView):
 	model = Entry
 
+    def build_return_data(self):
+        entry = self.object
+        data = {}
+        data['id'] = entry.pk
+        data['title'] = entry.title
+        data['content'] = entry.content
+        data['feeling'] = entry.feeling
+        data['message'] = 'Created Successfully'
+        return data
+
 class EntryUpdate(AjaxableResponseMixin, UpdateView):
 	model = Entry
+
+    def build_return_data(self):
+        entry = self.object
+        data = {}
+        data['id'] = entry.pk
+        data['title'] = entry.title
+        data['content'] = entry.content
+        data['feeling'] = entry.feeling
+        data['message'] = 'Saved Successfully'
+        return data
 
 class EntryDelete(AjaxableResponseMixin, DeleteView):
 	model = Entry
 
+    def build_return_data(self):
+        entry = self.object
+        data = {'message': 'Deleted Successfully'}
+
+        return data
 
 class EntryList(AjaxableResponseMixin, ListView):
 	model = Entry
