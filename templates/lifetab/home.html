@@ -9,7 +9,7 @@
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
-            		alert('Your todo has been created!');
+            		// alert('Your todo has been created!');
                     var title = response.title;
                     var todoid = response.id;
                     var data = '<li class="rest"><form action="/todo/done" method="post"><input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+title+'</label></form></li>';
@@ -44,7 +44,7 @@
  			</div>
             <div class="li-header">
                 <form action="{% url 'todo:create' %}" id="today-create" method="post">
-                {% csrf_token %}
+                    {% csrf_token %}
                     <input type="text" name="title"/><br>
                     <input type="submit" style="display:none">
                 </form>
