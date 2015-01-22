@@ -54,13 +54,14 @@
  <div id="wrapper">
  	<div id="header">
  		<div id="logout-button">
-            <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+
+            <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button type ="submit">Logout</button></a>
  		</div>
  	</div>
- 	<div id="left-section">
+ 	<div id="left-section" class="col-md-4">
  		<div id="today-box">
  			<div class="heading">
- 				Today
+ 				To-dos
  			</div>
             <div class="li-header">
                 <form action="{% url 'todo:create' %}" id="today-create" method="post">
@@ -100,7 +101,7 @@
 				</form>
  		</div>
  		<div id = "clock">
- 			<!-- <iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe> -->
+ 			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
 
 
  		</div>
@@ -126,14 +127,14 @@
 	     <li>
 	       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
 	     </li>
-         <li>
+         <!-- <li>
             <form action="/login" method="post">Use normal login
             {% csrf_token %}
                 <input type="text" name="username"/>
                 <input type="password" name="password"/>
                 <input type="submit" value="Login"/>
             </form>
-        </li>
+        </li> -->
      </ul>
    {% endif %}
    

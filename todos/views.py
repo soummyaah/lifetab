@@ -59,7 +59,7 @@ class TodoUpdate(View):
 				from datetime import datetime
 				id = form.cleaned_data['id']
 				todo = Todo.objects.get(pk=id)
-				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes'])
+				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes']
 				todo.save()
 				data = {'message': 'Saved Successfully','id': todo.pk, 'title': todo.title, 'notes': todo.notes}
 				return JsonResponse(data)
