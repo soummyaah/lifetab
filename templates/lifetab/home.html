@@ -17,6 +17,7 @@
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
+                    console.log(response);
 
                     var title = response.title;
                     var todoid = response.id;
@@ -67,7 +68,7 @@
                 <form action="{% url 'todo:create' %}" id="today-create" method="post">
                     {% csrf_token %}
                     <input type="text" name="title"/><br>
-                    <input type="submit" style="display:none">
+                    <input type="submit"> <!-- style="display:none" -->>
                 </form>
             </div>
             <ul id="today-ul">
@@ -94,19 +95,19 @@
  			</ul>
  		</div>
  	</div>
- 	<div id="center-section">
+ 	<div id="center-section" class="col-md-4">
  		<div id = "google-search">
 				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
 		        	<input type="text" class="tftextinput" name="q" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
 				</form>
  		</div>
- 		<div id = "clock">
+ 		<!-- <div id = "clock">
  			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
 
 
- 		</div>
+ 		</div> -->
  	</div>
- 	<div id="right-section">
+ 	<div id="right-section" class="col-md-4">
  		<div id="add-journal">
  			<form>
  				<textarea rows="8" cols="40" name="new-journal" placeholder="Write your journal here :)"></textarea><br>
