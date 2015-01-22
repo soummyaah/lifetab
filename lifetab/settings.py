@@ -94,13 +94,6 @@ LOGIN_REDIRECT_URL = '/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = 'static'
-
-STATICFILES_DIR = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
 # Templates
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
@@ -145,4 +138,29 @@ AUTHENTICATION_BACKENDS = (
    'social.backends.google.GoogleOAuth2',
    'social.backends.twitter.TwitterOAuth',
    'django.contrib.auth.backends.ModelBackend',
+)
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+
+STATIC_URL = '/static/'
+
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+# List of finder classes that know how to find static files in
+# various locations.
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
