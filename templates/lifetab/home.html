@@ -60,10 +60,11 @@
                 <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button class="btn-info btn" type ="submit">LOGOUT</button></a>
             </div>
  		</div>
- 	    </div>
-    <div class="row" style="padding:3%;">
+ 	</div>
+    <hr>
+    <div class="row" style="padding:2% 2%;">
      	<div id="left-section" class="col-md-4">
-            <div class="row">
+            <div class="row" style="padding:0%;margin:0% 5% 15% 5%;">
          		<div id="today-box" class="sticky taped2">
          			<div class="heading">
                         <strong>TO-DOS</strong>
@@ -72,7 +73,7 @@
                         <form action="{% url 'todo:create' %}" id="today-create" method="post">
                             {% csrf_token %}
                             <input type="text" name="title"/><br>
-                            <input type="submit" style="display:none">
+                            <input type="submit" style="display:none"/>
                         </form>
                     </div>
                     <ul id="today-ul">
@@ -80,8 +81,8 @@
              		</ul>
          		</div>
             </div>
-            <div class="row">
-         		<div id="future-box" class="sticky taped2">
+            <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
+         		<div id="future-box" class="sticky taped3">
          			<div class="heading">
          				<strong>FUTURE</strong>
          			</div>
@@ -94,9 +95,12 @@
             </div>
      	</div>
      	<div id="center-section" class="col-md-4">
-     		<div id = "google-search">
+     		<div id = "google-search" style="margin: 20% 0 0 0">
     				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
-    		        	<input type="text" class="tftextinput" name="q" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
+    		        	<input type="text" class="tftextinput" name="q" size="30" maxlength="120" style="padding:1%;">
+                        <button type="submit" value="search" class="tfbutton" style="padding:1%;">
+                            Google Now
+                        </button>
     				</form>
      		</div>
      		<!-- <div id = "clock">
@@ -112,7 +116,7 @@
      		</div>
      		<div id="your-journal">
      			<form>
-     				<input type="submit" value="Make me a new journal">
+     				<input type="submit" value="Get me my Journals">
      			</form>
      		</div>
      	</div>
