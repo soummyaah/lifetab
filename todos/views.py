@@ -46,17 +46,17 @@ class TodoCreate(View):
 				response_data = {'status': 'success',
 									'data':	{
 											'id': td.id,
-											'title': td.title
-											}
+											'title': td.title,
+											},
 								}
 			else:
 				response_data = {'status': 'success', 'errors': form.errors}
-				return JsonResponse(form.errors)
+			return JsonResponse(response_data)
 		else:
 			data = {
 				'errors': 'AJAX not used',
 			}
-			return HttpResponse(JsonResponse(data))
+			return JsonResponse(data)
 
 class TodoUpdate(View):
 	def post(self, request, todo_id):
@@ -91,7 +91,7 @@ class TodoUpdate(View):
 class TodoListToday(View):
 
 	def get(self, request):
-		if not request.is_ajax():
+		if request.is_ajax():
 			import datetime
 			yesterday = datetime.date.today() - datetime.timedelta(days=1)
 			todo_objs = Todo.objects.filter(due__gt=yesterday).order_by('-modified')
@@ -111,7 +111,7 @@ class TodoListToday(View):
 class TodoListFuture(View):
 
 	def get(self, request):
-		if not request.is_ajax():
+		if request.is_ajax():
 			import datetime
 			today = datetime.date.today() + datetime.timedelta(days=1)
 			todo_objs = Todo.objects.filter(due__gte=today).order_by('-modified')
@@ -135,7 +135,7 @@ class TodoDone(View):
 				pk = request.POST['id']
 				todo = Todo.objects.get(pk=pk)
 				todo.delete()
-				response_data = {'status': 'success'}
+				response_data = {'status': 'success', 'id': pk}
 			except Todo.DoesNotExist:
 				response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
 			return JsonResponse(response_data)

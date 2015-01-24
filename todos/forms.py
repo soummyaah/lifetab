@@ -1,5 +1,6 @@
 from django import forms
 from models import Todo
 
-class AddTodoForm(forms.Form):
-	title = forms.CharField()
+class AddTodoForm(forms.ModelForm):
+	class Meta:
+		model = Todo

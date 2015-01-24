@@ -4,66 +4,91 @@
 
 {% if user and not user.is_anonymous %}
 <script> 
-        function attachgetlisteners(item){
-            $(item).ajaxForm({
-                success: function(response){
-                    // alert('item deleted!');
-                    $(item).fadeOut('slow');
-                },
-            });
-        }
         // wait for the DOM to be loaded 
         $(function() {
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
-                    console.log(response);
-
-                    var title = response.title;
-                    var todoid = response.id;
-                    todoid = response.data[i].id;
-                        title = response.data[i].title;
-                        var new_todo = $('#todo-block-sample')
+                    console.log(JSON.stringify(response));
+                    if(response.status == "success"){
+                        var todoid = response.data.id;
+                        var title = response.data.title;
+                        // console.log('id:' + todoid + ', title' + title);
+                        var new_todo = $('.todo-block-sample')
                                             .clone()
                                             .removeClass('todo-block-sample')
                                             .addClass('todo-block');
                         new_todo.find('.todo-block-id').attr('value', todoid);
                         new_todo.find('.todo-block-title').html(title);
+                        // console.log(new_todo.html());
                         new_todo.prependTo('#todo-todays');
-                        new_todo.hide().fadeIn();
-                    //$('#today-ul').prepend(data);
-                    //$('#today-ul li:first').css({'display':'none'}).fadeIn();
-                    //$('#newtodo').val('');
+                        new_todo.hide().fadeIn('slow');
+                        attachDoneListeners(new_todo);
+                    }else{
+                        console.log(JSON.stringify(response.errors));
+                    }
+                    $('#today-create').resetForm();
             	},
             });
 
+
+            function attachDoneListeners(elem){
+                $(elem).ajaxForm({
+                    success: function(response, status, xhr, jqForm){
+                        console.log(JSON.stringify(response));
+                        if(response.status == "success"){
+                            jqForm.find('.todo-block-title').addClass('todo-done');
+                            jqForm.fadeOut('slow', function(){$(this).remove();});
+                        }else{
+                            alert('There was a Server issue');
+                        }
+                    },
+                }); 
+            }
 
 
             // fetch today's stuff
             $.get('/todo/today')
                 .done(function(response){
+                    //console.log(JSON.stringify(response))
                     var block = $('#today-todays');
                     block.html('');
                     var len = response.data.length;
+                    //console.log(len);
                     for(var i=0; i<len; i++){
                         todoid = response.data[i].id;
                         title = response.data[i].title;
-                        var new_todo = $('#todo-block-sample')
+                        var new_todo = $('.todo-block-sample')
                                             .clone()
                                             .removeClass('todo-block-sample')
-                                            .addClass('todo-block');
+                                            .addClass('todo-block')
                         new_todo.find('.todo-block-id').attr('value', todoid);
                         new_todo.find('.todo-block-title').html(title);
-                        new_todo.appendTo(block);
+                        new_todo.appendTo('#todo-todays');
+                        attachDoneListeners(new_todo);
                     }
                 })
                 .fail(function(response){
                     alert(response.status);
                 });
-            
 
 
-            // fetch other things
+            // function todoDone(id){
+            //     todoid = $(this).parent().attr('data-id')
+            //     $.post('/todo/done', {'id': id})
+            //         .done(function(response){
+            //             if(response.status == "success"){
+            //                 var todoid = '#todo-' + response.data.id;
+            //                 $(todoid).parent().fadeOut();
+            //             }else{
+            //                 alert('There was a Server issue' + response.errors);
+            //             }
+            //         })
+            //         .fail(function(response){
+            //             alert(response.status);
+            //         });
+            // }           
+
         }); 
     </script> 
     <style>
@@ -72,6 +97,9 @@
         }
         .todo-block{
             display: block;
+        }
+        .todo-done{
+            text-decoration: line-through;
         }
     </style>
  <div id="wrapper">
@@ -91,27 +119,22 @@
          			<div class="heading">
                         <strong>TO-DOS</strong>
          			</div>
-                    <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                        <form action="{% url 'todo:create' %}" id="today-create" method="post">
                             {% csrf_token %}
-                            <input type="text" name="title"/><br>
+                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
                             <input type="submit" style="display:none"/>
                         </form>
                     <div id="samples">
-                        <div class="todo-block-sample">
-                            <button class="todo-block-id" name="todo" value="">X</button>
-                            <span class="todo-block-title"></span>
-                        </div>
-
-                    </div>
-
-                    <div class="li-header">
-                        
-                    </div>
-                    <ul id="today-ul">
-                            <form class="todo-todays" action="{% url 'todo:done' %}" id="today-done" method="post">
+                        <form action="{% url 'todo:done' %}" id="today-create" method="post" class="todo-block-sample">
                             {% csrf_token %}
-
+                            <input type="submit" value="X"/>
+                            <input type="hidden" class="todo-block-id" name="id" value="" />
+                            <span class="todo-block-title"></span>
                         </form>
+                    </div>
+
+                    <ul id="today-ul">
+                        <div id="todo-todays"></div>
              		</ul>
          		</div>
             </div>
