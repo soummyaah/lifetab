@@ -43,9 +43,14 @@ class TodoCreate(View):
 				# from datetime import datetime
 				td = Todo.objects.create(title=request.POST['title'])
 				td.save()
-				data = {'message': 'Saved Successfully','id': td.id, 'title': td.title}
-				HttpResponse(json.dumps(data), content_type="application/json")
+				response_data = {'status': 'success',
+									'data':	{
+											'id': td.id,
+											'title': td.title
+											}
+								}
 			else:
+				response_data = {'status': 'success', 'errors': form.errors}
 				return JsonResponse(form.errors)
 		else:
 			data = {
@@ -54,19 +59,29 @@ class TodoCreate(View):
 			return HttpResponse(JsonResponse(data))
 
 class TodoUpdate(View):
-	def post(self, request):
+	def post(self, request, todo_id):
+		try:
+			todo = Todo.objects.get(pk=todo_id)
+		except Todo.DoesNotExist:
+			return JsonResponse({'status': 'error', 'errors': 'Todo does not exist'})
+
+
 		if request.is_ajax():
-			form = AddTodoForm(request.POST)
+			form = AddTodoForm(request.POST, instance=todo)
 			if form.is_valid():
 				from datetime import datetime
 				id = form.cleaned_data['id']
 				todo = Todo.objects.get(pk=id)
 				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes']
 				todo.save()
-				data = {'message': 'Saved Successfully','id': todo.pk, 'title': todo.title, 'notes': todo.notes}
-				HttpResponse(json.dumps(data), content_type="application/json")
+				response_data = {'status': 'success',
+									'data':{'id': todo.pk,
+											'title': todo.title,
+											}
+								}
 			else:
-				return JsonResponse(form.errors)
+				response_data = {'status': 'error', 'errors': form.errors}
+			return JsonResponse(form.errors)
 		else:
 			data = {
 				'errors': 'AJAX not used',
@@ -76,17 +91,17 @@ class TodoUpdate(View):
 class TodoListToday(View):
 
 	def get(self, request):
-		if request.is_ajax():
+		if not request.is_ajax():
 			import datetime
 			yesterday = datetime.date.today() - datetime.timedelta(days=1)
 			todo_objs = Todo.objects.filter(due__gt=yesterday).order_by('-modified')
-			response = {'message': 'Today\'s Stuff'}
-			response_data = []
+			response_data = {'status': 'success'}
+			todos = []
 			for todo_obj in todo_objs:
-				todo_data = {'title': todo_obj.title, 'notes': todo_obj.notes, 'id': todo_obj.pk}
-				response_data.append(todo_data)
-			response['data'] = response_data
-			return JsonResponse(response)
+				todo_data = {'title': todo_obj.title, 'id': todo_obj.pk}
+				todos.append(todo_data)
+			response_data['data'] = todos
+			return JsonResponse(response_data)
 		else:
 			data = {
 				'errors': 'AJAX not used',
@@ -96,17 +111,17 @@ class TodoListToday(View):
 class TodoListFuture(View):
 
 	def get(self, request):
-		if request.is_ajax():
+		if not request.is_ajax():
 			import datetime
-			today = datetime.date.today()
+			today = datetime.date.today() + datetime.timedelta(days=1)
 			todo_objs = Todo.objects.filter(due__gte=today).order_by('-modified')
-			response = {'message': 'Today\'s Stuff'}
-			response_data = []
+			response_data = {'status': 'success'}
+			todos = []
 			for todo_obj in todo_objs:
-				todo_data = {'title': todo_obj.title, 'notes': todo_obj.notes, 'id': todo_obj.pk}
-				response_data.append(todo_data)
-			response['data'] = response_data
-			return JsonResponse(response)
+				todo_data = {'title': todo_obj.title, 'id': todo_obj.pk}
+				todos.append(todo_data)
+			response_data['data'] = todos
+			return JsonResponse(response_data)
 		else:
 			data = {
 				'errors': 'AJAX not used',
@@ -120,10 +135,9 @@ class TodoDone(View):
 				pk = request.POST['id']
 				todo = Todo.objects.get(pk=pk)
 				todo.delete()
-				data = {'message': 'Done',}
-				return JsonResponse(data)
+				response_data = {'status': 'success'}
 			except Todo.DoesNotExist:
-				error = { 'error': 'That todo does not exist',}
-				return JsonResponse(error)
+				response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
+			return JsonResponse(response_data)
 		else:
 			return JsonResponse({'error': 'Not fetched by AJAX'})

@@ -21,37 +21,59 @@
 
                     var title = response.title;
                     var todoid = response.id;
-                    var data = '<li class="rest"><form action="/todo/done" method="post">' + "{% csrf_token %}" + '<input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+ todoid + ":" + title+'</label></form></li>';
-                    $('#today-ul').prepend(data);
-                    $('#today-ul li:first').css({'display':'none'}).fadeIn();
-                    $('#newtodo').val('');
+                    todoid = response.data[i].id;
+                        title = response.data[i].title;
+                        var new_todo = $('#todo-block-sample')
+                                            .clone()
+                                            .removeClass('todo-block-sample')
+                                            .addClass('todo-block');
+                        new_todo.find('.todo-block-id').attr('value', todoid);
+                        new_todo.find('.todo-block-title').html(title);
+                        new_todo.prependTo('#todo-todays');
+                        new_todo.hide().fadeIn();
+                    //$('#today-ul').prepend(data);
+                    //$('#today-ul li:first').css({'display':'none'}).fadeIn();
+                    //$('#newtodo').val('');
             	},
             });
 
 
 
             // fetch today's stuff
-            $.get('/todo/today').done(function(response){
-                                    var block = $('#today-ul');
-                                    block.html('');
-                                    var len = response.data.length;
-                                    for(var i=0; i<len; i++){
-                                        todoid = response.data[i].id;
-                                        title = response.data[i].title;
-                                        block.append('<li class="rest"><form action="/todo/done" method="post">' + "{% csrf_token %}" + '<input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+ todoid + ":" +title+'</label></form></li>');
-
-                                    }
-                                    var items = $('.rest');
-                                    for(var i=0; i<items.length; i++){
-                                        attachgetlisteners(items[i]);
-                                    }
-                                });
+            $.get('/todo/today')
+                .done(function(response){
+                    var block = $('#today-todays');
+                    block.html('');
+                    var len = response.data.length;
+                    for(var i=0; i<len; i++){
+                        todoid = response.data[i].id;
+                        title = response.data[i].title;
+                        var new_todo = $('#todo-block-sample')
+                                            .clone()
+                                            .removeClass('todo-block-sample')
+                                            .addClass('todo-block');
+                        new_todo.find('.todo-block-id').attr('value', todoid);
+                        new_todo.find('.todo-block-title').html(title);
+                        new_todo.appendTo(block);
+                    }
+                })
+                .fail(function(response){
+                    alert(response.status);
+                });
             
 
 
             // fetch other things
         }); 
     </script> 
+    <style>
+        .todo-block-sample{
+            display: none;
+        }
+        .todo-block{
+            display: block;
+        }
+    </style>
  <div id="wrapper">
  	<div class="row" id="header">
         <div class="col-md-2 col-md-push-10">
@@ -69,15 +91,27 @@
          			<div class="heading">
                         <strong>TO-DOS</strong>
          			</div>
-                    <div class="li-header">
-                        <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                    <form action="{% url 'todo:create' %}" id="today-create" method="post">
                             {% csrf_token %}
                             <input type="text" name="title"/><br>
                             <input type="submit" style="display:none"/>
                         </form>
+                    <div id="samples">
+                        <div class="todo-block-sample">
+                            <button class="todo-block-id" name="todo" value="">X</button>
+                            <span class="todo-block-title"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="li-header">
+                        
                     </div>
                     <ul id="today-ul">
-             			Loading...
+                            <form class="todo-todays" action="{% url 'todo:done' %}" id="today-done" method="post">
+                            {% csrf_token %}
+
+                        </form>
              		</ul>
          		</div>
             </div>
