@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core.urlresolvers import reverse, reverse_lazy
 from models import Todo
 from forms import AddTodoForm
+import json
 
 class AjaxableResponseMixin(object):
 
@@ -38,11 +39,12 @@ class TodoCreate(View):
 		if request.is_ajax():
 			form = AddTodoForm(request.POST)
 			if form.is_valid():
-				from datetime import datetime
-				todo = Todo(title=form.cleaned_data['title'], notes=form.cleaned_data['notes'])
-				todo.save()
-				data = {'message': 'Saved Successfully','id': todo.pk, 'title': todo.title, 'notes': todo.notes}
-				return JsonResponse(data)
+				print request.POST['title']
+				# from datetime import datetime
+				td = Todo.objects.create(title=request.POST['title'])
+				td.save()
+				data = {'message': 'Saved Successfully','id': td.id, 'title': td.title}
+				HttpResponse(json.dumps(data), content_type="application/json")
 			else:
 				return JsonResponse(form.errors)
 		else:
@@ -59,10 +61,10 @@ class TodoUpdate(View):
 				from datetime import datetime
 				id = form.cleaned_data['id']
 				todo = Todo.objects.get(pk=id)
-				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes'])
+				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes']
 				todo.save()
 				data = {'message': 'Saved Successfully','id': todo.pk, 'title': todo.title, 'notes': todo.notes}
-				return JsonResponse(data)
+				HttpResponse(json.dumps(data), content_type="application/json")
 			else:
 				return JsonResponse(form.errors)
 		else:

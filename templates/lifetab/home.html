@@ -17,7 +17,8 @@
             // bind 'myForm' and provide a simple callback function 
             $('#today-create').ajaxForm({
             	success: function(response){
-            		//alert('Your todo has been created!');
+                    console.log(response);
+
                     var title = response.title;
                     var todoid = response.id;
                     var data = '<li class="rest"><form action="/todo/done" method="post">' + "{% csrf_token %}" + '<input type="submit" value="check"/><label><input type="hidden" name="id" value="'+ todoid+'"/>'+ todoid + ":" + title+'</label></form></li>';
@@ -52,89 +53,97 @@
         }); 
     </script> 
  <div id="wrapper">
- 	<div id="header">
- 		<div id="logout-button">
-            <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
- 		</div>
- 	</div>
- 	<div id="left-section">
- 		<div id="today-box">
- 			<div class="heading">
- 				Today
- 			</div>
-            <div class="li-header">
-                <form action="{% url 'todo:create' %}" id="today-create" method="post">
-                {% csrf_token %}
-                    <input type="text" name="title" id="newtodo"/><br>
-                    <input type="submit" style="display:none">
-                </form>
+ 	<div class="row" id="header">
+        <div class="col-md-2 col-md-push-10">
+            <div style="width:60%; margin: 0% 0px 0% 50%; padding: 2%;">
+
+                <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button class="btn-info btn" type ="submit">LOGOUT</button></a>
             </div>
-            <ul id="today-ul">
-     			Loading...
-     		</ul>
  		</div>
- 		<div id="future-box">
- 			<div class="heading">
- 				Future
- 			</div>
- 			<ul id="future-ul">
- 				<li class="li-header">
- 					<form>
- 						<input type="text"/><br>
- 					</form>
- 				</li>
- 				<li class="rest">
- 					<form >
- 						<input type="submit" value="check"/>
- 						<input type="hidden"/>
- 						Some random text from the future database:)
- 					</form>
- 				</li>
- 			</ul>
- 		</div>
- 	</div>
- 	<div id="center-section">
- 		<div id = "google-search">
-				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
-		        	<input type="text" class="tftextinput" name="q" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
-				</form>
- 		</div>
- 		<div id = "clock">
- 			<!-- <iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe> -->
+ 	    </div>
+    <div class="row" style="padding:3%;">
+     	<div id="left-section" class="col-md-4">
+            <div class="row">
+         		<div id="today-box" class="sticky taped2">
+         			<div class="heading">
+                        <strong>TO-DOS</strong>
+         			</div>
+                    <div class="li-header">
+                        <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="title"/><br>
+                            <input type="submit" style="display:none">
+                        </form>
+                    </div>
+                    <ul id="today-ul">
+             			Loading...
+             		</ul>
+         		</div>
+            </div>
+            <div class="row">
+         		<div id="future-box" class="sticky taped2">
+         			<div class="heading">
+         				<strong>FUTURE</strong>
+         			</div>
+         				<form>
+     						<input type="text"/><br>
+                            <input type="submit" style="display:none">
+         				</form>
+         				
+         		</div>
+            </div>
+     	</div>
+     	<div id="center-section" class="col-md-4">
+     		<div id = "google-search">
+    				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
+    		        	<input type="text" class="tftextinput" name="q" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
+    				</form>
+     		</div>
+     		<!-- <div id = "clock">
+     			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
+            </div> -->
+     	</div>
+     	<div id="right-section" class="col-md-4">
+     		<div id="add-journal">
+     			<form>
+     				<textarea rows="8" cols="40" name="new-journal" placeholder="Write your journal here :)"></textarea><br>
+     				<input type="submit" value="Yes, I want a new journal :D">
+     			</form>
+     		</div>
+     		<div id="your-journal">
+     			<form>
+     				<input type="submit" value="Make me a new journal">
+     			</form>
+     		</div>
+     	</div>
+    </div>
+</div>
 
-
- 		</div>
- 	</div>
- 	<div id="right-section">
- 		<div id="add-journal">
- 			<form>
- 				<textarea rows="8" cols="40" name="new-journal" placeholder="Write your journal here :)"></textarea><br>
- 				<input type="submit" value="Yes, I want a new journal :D">
- 			</form>
- 		</div>
- 		<div id="your-journal">
- 			<form>
- 				<input type="submit" value="Make me a new journal">
- 			</form>
- 		</div>
- 	</div>
- </div>
  <p>
   
    {% else %}
-    <ul> 
-	     <li>
-	       <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
-	     </li>
-         <li>
-            <form action="/login" method="post">Use normal login
-            {% csrf_token %}
-                <input type="text" name="username"/>
-                <input type="password" name="password"/>
-                <input type="submit" value="Login"/>
-            </form>
-        </li>
-     </ul>
+   <div class="content">
+       <div class="row">
+            <div class="col-lg-6 col-lg-push-3">
+                <div class="alignment">
+                    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"><button type="submit" class="btn-danger btn-lg">Login with Google</button></a>
+                </div>
+           </div>
+        </div>
+        <hr>
+        <div class="row">
+           <div class="col-lg-6 col-lg-push-3">
+            <div class="alignment">
+               <form action="/login" method="post"><h3>Use normal login</h3>
+                    {% csrf_token %}
+                        <br><input type="text" name="username"/><br>
+                        <input type="password" name="password"/><br>
+                        <input type="submit" value="Login"/><br>
+                </form>
+             </div>
+            </div>
+        </div>
+    </div>
    {% endif %}
    
  </p>
