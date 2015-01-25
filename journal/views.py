@@ -46,16 +46,16 @@ class EntryUpdate(View):
 				id = form.cleaned_data['id']
 				entry = Entry.objects.get(pk=id)
 				entry.title = form.cleaned_data['title']
-				# entry.content = form.cleaned_data['content']
-				# entry.feeling = form.cleaned_data['feeling']
-				# entry.is_protected = form.cleaned_data['is_protected']
+				entry.content = form.cleaned_data['content']
+				entry.feeling = form.cleaned_data['feeling']
+				entry.is_protected = form.cleaned_data['is_protected']
 				entry.save()
 				response_data = {'status': 'success',
 									'data':{'id': id,
 											'title': entry.title,
-											# 'content': entry.content,
-											# 'feeling': entry.feeling,
-											# 'is_protected': entry.is_protected
+											'content': entry.content,
+											'feeling': entry.feeling,
+											'is_protected': entry.is_protected
 											}
 								}
 			else:
@@ -77,8 +77,8 @@ class EntryDelete(View):
 				# content = request.POST['content']
 				# feeling = request.POST['feeling']
 				# is_protected = request.POST['is_protected']
-				todo = Todo.objects.get(pk=pk)
-				todo.delete()
+				entry = Entry.objects.get(pk=pk)
+				entry.delete()
 				response_data = {'status': 'success', 'data':{
 												'id': pk,
 												'title': title,
@@ -86,7 +86,8 @@ class EntryDelete(View):
 												# 'feeling': feeling,
 												# 'is_protected': is_protected
 												}
-			except Todo.DoesNotExist:
+								}
+			except Entry.DoesNotExist:
 				response_data = {'status': 'error', 'errors' : 'That entry does not exist',}
 			return JsonResponse(response_data)
 		else:
@@ -112,23 +113,23 @@ class EntryList(View):
 			return HttpResponse(JsonResponse(data))
 
 class EntryDetail(View):
-	#Not compelte
-	def post(self, request):
-		if request.is_ajax():
-			try:
-				id = request.POST['id']
-				title = request.POST['title']
-				content = request.POST['content']
-				feeling = request.POST['feeling']
-				is_protected = request.POST['is_protected']
-				todo = Todo.objects.get(pk=pk)
-				todo.delete()
-				response_data = {'status': 'success', 'id': pk}
-			except Todo.DoesNotExist:
-				response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
-			return JsonResponse(response_data)
-		else:
-			return JsonResponse({'error': 'Not fetched by AJAX'})
+	#Not compelete
+	# def post(self, request):
+	# 	if request.is_ajax():
+	# 		try:
+	# 			id = request.POST['id']
+	# 			title = request.POST['title']
+	# 			content = request.POST['content']
+	# 			feeling = request.POST['feeling']
+	# 			is_protected = request.POST['is_protected']
+	# 			todo = Todo.objects.get(pk=pk)
+	# 			todo.delete()
+	# 			response_data = {'status': 'success', 'id': pk}
+	# 		except Todo.DoesNotExist:
+	# 			response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
+	# 		return JsonResponse(response_data)
+	# 	else:
+	# 		return JsonResponse({'error': 'Not fetched by AJAX'})
 
 # method stubs to be used for testing of ajax
 
