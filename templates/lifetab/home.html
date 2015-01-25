@@ -92,7 +92,11 @@
                     </table>
                     <!-- <input type="checkbox" name="is_protected"/> -->
                 {% endif %}
-     				
+     			<!-- <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                            {% csrf_token %}
+                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
+                            <input type="submit" style="display:none"/>
+                        </form>	 -->
      			</form>
      		</div>
      	</div>
