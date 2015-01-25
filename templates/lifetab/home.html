@@ -3,94 +3,7 @@
 {% block main %}
 
 {% if user and not user.is_anonymous %}
-<script> 
-        // wait for the DOM to be loaded 
-        $(function() {
-            // bind 'myForm' and provide a simple callback function 
-            $('#today-create').ajaxForm({
-            	success: function(response){
-                    console.log(JSON.stringify(response));
-                    if(response.status == "success"){
-                        var todoid = response.data.id;
-                        var title = response.data.title;
-                        // console.log('id:' + todoid + ', title' + title);
-                        var new_todo = $('.todo-block-sample')
-                                            .clone()
-                                            .removeClass('todo-block-sample')
-                                            .addClass('todo-block');
-                        new_todo.find('.todo-block-id').attr('value', todoid);
-                        new_todo.find('.todo-block-title').html(title);
-                        // console.log(new_todo.html());
-                        new_todo.prependTo('#todo-todays');
-                        new_todo.hide().fadeIn('slow');
-                        attachDoneListeners(new_todo);
-                    }else{
-                        console.log(JSON.stringify(response.errors));
-                    }
-                    $('#today-create').resetForm();
-            	},
-            });
 
-
-            function attachDoneListeners(elem){
-                $(elem).ajaxForm({
-                    success: function(response, status, xhr, jqForm){
-                        console.log(JSON.stringify(response));
-                        if(response.status == "success"){
-                            jqForm.find('.todo-block-title').addClass('todo-done');
-                            jqForm.fadeOut('slow', function(){$(this).remove();});
-                        }else{
-                            alert('There was a Server issue');
-                        }
-                    },
-                }); 
-            }
-
-
-            // fetch today's stuff
-            $.get('/todo/today')
-                .done(function(response){
-                    // console.log(JSON.stringify(response))
-                    var block = $('#today-todays');
-                    block.html('');
-                    var len = response.data.length;
-                    //console.log(len);
-                    for(var i=0; i<len; i++){
-                        todoid = response.data[i].id;
-                        title = response.data[i].title;
-                        var new_todo = $('.todo-block-sample')
-                                            .clone()
-                                            .removeClass('todo-block-sample')
-                                            .addClass('todo-block')
-                        new_todo.find('.todo-block-id').attr('value', todoid);
-                        new_todo.find('.todo-block-title').html(title);
-                        new_todo.appendTo('#todo-todays');
-                        attachDoneListeners(new_todo);
-                    }
-                })
-                .fail(function(response){
-                    alert(response.status);
-                });
-
-
-            // function todoDone(id){
-            //     todoid = $(this).parent().attr('data-id')
-            //     $.post('/todo/done', {'id': id})
-            //         .done(function(response){
-            //             if(response.status == "success"){
-            //                 var todoid = '#todo-' + response.data.id;
-            //                 $(todoid).parent().fadeOut();
-            //             }else{
-            //                 alert('There was a Server issue' + response.errors);
-            //             }
-            //         })
-            //         .fail(function(response){
-            //             alert(response.status);
-            //         });
-            // }           
-
-        }); 
-    </script> 
     <style>
         .todo-block-sample{
             display: none;
@@ -221,9 +134,110 @@
     </div>
 </div>
 
+ <p>
+  
+   {% else %}
+   <div class="content">
+       <div class="row">
+            <div class="col-lg-6 col-lg-push-3">
+                <div class="alignment">
+                    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"><button type="submit" class="btn-danger btn-lg">Login with Google</button></a>
+                </div>
+           </div>
+        </div>
+        <hr>
+        <div class="row">
+           <div class="col-lg-6 col-lg-push-3">
+            <div class="alignment">
+               <form action="/login" method="post"><h3>Use normal login</h3>
+                    {% csrf_token %}
+                        <br><input type="text" name="username"/><br>
+                        <input type="password" name="password"/><br>
+                        <input type="submit" value="Login"/><br>
+                </form>
+             </div>
+            </div>
+        </div>
+    </div>
+   {% endif %}
+   
+ </p>
+ </div>
+{% endblock %}
 
 
+
+{% block scripts %}
 <script> 
+    // wait for the DOM to be loaded 
+    $(function() {
+        // bind 'myForm' and provide a simple callback function 
+        $('#today-create').ajaxForm({
+            success: function(response){
+                console.log(JSON.stringify(response));
+                if(response.status == "success"){
+                    var todoid = response.data.id;
+                    var title = response.data.title;
+                    // console.log('id:' + todoid + ', title' + title);
+                    var new_todo = $('.todo-block-sample')
+                                        .clone()
+                                        .removeClass('todo-block-sample')
+                                        .addClass('todo-block');
+                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-title').html(title);
+                    // console.log(new_todo.html());
+                    new_todo.prependTo('#todo-todays');
+                    new_todo.hide().fadeIn('slow');
+                    attachDoneListeners(new_todo);
+                }else{
+                    console.log(JSON.stringify(response.errors));
+                }
+                $('#today-create').resetForm();
+            },
+        });
+
+
+        function attachDoneListeners(elem){
+            $(elem).ajaxForm({
+                success: function(response, status, xhr, jqForm){
+                    console.log(JSON.stringify(response));
+                    if(response.status == "success"){
+                        jqForm.find('.todo-block-title').addClass('todo-done');
+                        jqForm.fadeOut('slow', function(){$(this).remove();});
+                    }else{
+                        alert('There was a Server issue');
+                    }
+                },
+            }); 
+        }
+
+
+        // fetch today's stuff
+        $.get('/todo/today')
+            .done(function(response){
+                // console.log(JSON.stringify(response))
+                var block = $('#today-todays');
+                block.html('');
+                var len = response.data.length;
+                //console.log(len);
+                for(var i=0; i<len; i++){
+                    todoid = response.data[i].id;
+                    title = response.data[i].title;
+                    var new_todo = $('.todo-block-sample')
+                                        .clone()
+                                        .removeClass('todo-block-sample')
+                                        .addClass('todo-block')
+                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-title').html(title);
+                    new_todo.appendTo('#todo-todays');
+                    attachDoneListeners(new_todo);
+                }
+            })
+            .fail(function(response){
+                alert(response.status);
+            });       
+
+    }); 
 
     function editEntry(elem){
         jid = $(elem).attr('data-edit');
@@ -279,7 +293,7 @@
                 console.log(JSON.stringify(response));
                 if (response.status="success"){
                     console.log('successfully fetched!');
-                }else if(response.status="error" && response.errors="password"){
+                }else if(response.status=="error" && response.errors=="password"){
                     console.log('Incorrect passcode. Please try again!');
                 }else{
                     console.log('Some random error occurred!');
@@ -317,65 +331,32 @@
         });
 
     }); 
-    </script> 
-    <style>
-        #your-journals{
-            margin: 15px;
-            padding: 10px;
-            background-color: maroon;
-            color: gray;
+</script> 
+<style>
+    #your-journals{
+        margin: 15px;
+        padding: 10px;
+        background-color: maroon;
+        color: gray;
 
-        }
-        .journal-block-sample{
-            display: none;
-        }
-        .journal-block{
-            display: block;
-        }
-        .journal-block:hover{
-            background-color: red;
-        }
-        #journal-message{
-            padding: 15px;
-            color: white;
-            background-color: green;
-            display: none;
-        }
-        #journal-message span{
-            font-style: italic;
-        }
-    </style>
-
-
-
-
- <p>
-  
-   {% else %}
-   <div class="content">
-       <div class="row">
-            <div class="col-lg-6 col-lg-push-3">
-                <div class="alignment">
-                    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"><button type="submit" class="btn-danger btn-lg">Login with Google</button></a>
-                </div>
-           </div>
-        </div>
-        <hr>
-        <div class="row">
-           <div class="col-lg-6 col-lg-push-3">
-            <div class="alignment">
-               <form action="/login" method="post"><h3>Use normal login</h3>
-                    {% csrf_token %}
-                        <br><input type="text" name="username"/><br>
-                        <input type="password" name="password"/><br>
-                        <input type="submit" value="Login"/><br>
-                </form>
-             </div>
-            </div>
-        </div>
-    </div>
-   {% endif %}
-   
- </p>
- </div>
+    }
+    .journal-block-sample{
+        display: none;
+    }
+    .journal-block{
+        display: block;
+    }
+    .journal-block:hover{
+        background-color: red;
+    }
+    #journal-message{
+        padding: 15px;
+        color: white;
+        background-color: green;
+        display: none;
+    }
+    #journal-message span{
+        font-style: italic;
+    }
+</style>
 {% endblock %}
