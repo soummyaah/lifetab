@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from models import Entry
 
 # Main class based methods to be used
-class EntryCreate(AjaxableResponseMixin, CreateView):
+class EntryCreate(View):
 	model = Entry
 	template_name = 'nothing.html'
 
@@ -20,7 +20,7 @@ class EntryCreate(AjaxableResponseMixin, CreateView):
 		data['message'] = 'Created Successfully'
 		return data
 
-class EntryUpdate(AjaxableResponseMixin, UpdateView):
+class EntryUpdate(View):
 	model = Entry
 	template_name = 'nothing.html'
 
@@ -34,7 +34,7 @@ class EntryUpdate(AjaxableResponseMixin, UpdateView):
 		data['message'] = 'Saved Successfully'
 		return data
 
-class EntryDelete(AjaxableResponseMixin, DeleteView):
+class EntryDelete(View):
 	model = Entry
 	template_name = 'nothing.html'
 
@@ -44,11 +44,11 @@ class EntryDelete(AjaxableResponseMixin, DeleteView):
 
 		return data
 
-class EntryList(AjaxableResponseMixin, ListView):
+class EntryList(View):
 	model = Entry
 	template_name = 'nothing.html'
 
-class EntryDetail(AjaxableResponseMixin, DetailView):
+class EntryDetail(View):
 	model = Entry
 	template_name = 'nothing.html'
 
@@ -67,7 +67,23 @@ def entryDelete(request):
 	return JsonResponse({'status': success})
 
 def entryList(request):
-	return JsonResponse({'status': success})
+	data = [
+		{
+			'id': 12,
+			'title': 'this is a test',
+			'content': 'This is supposed to be a long thing that is concatenated to be as short as possible...',
+			'feeling': 'Happy',
+			'is_protected': False,
+		},
+		{
+			'id': 21,
+			'title': 'a protected text',
+			'content': 'Contents Hidden. Click to enter password',
+			'feeling': 'Sad',
+			'is_protected': True,
+		},
+	]
+	return JsonResponse({'status': success, 'data':data})
 
 def entryDetail(request):
 	return JsonResponse({'status': success})

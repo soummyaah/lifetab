@@ -15,5 +15,5 @@ urlpatterns = patterns('',
 	url(r'^edit', entryUpdate, name="edit"),
 	url(r'^delete', entryDelete, name="delete"),
 	url(r'^list', entryList, name="list"),
-	url(r'^show', entryDetail, name="future"),
+	url(r'^show', entryDetail, name="show"),
 )

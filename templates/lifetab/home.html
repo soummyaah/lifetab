@@ -50,7 +50,7 @@
             // fetch today's stuff
             $.get('/todo/today')
                 .done(function(response){
-                    //console.log(JSON.stringify(response))
+                    // console.log(JSON.stringify(response))
                     var block = $('#today-todays');
                     block.html('');
                     var len = response.data.length;
@@ -156,7 +156,7 @@
     				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
     		        	<input type="text" class="tftextinput" name="q" size="30" maxlength="120" style="padding:1%;">
                         <button type="submit" value="search" class="tfbutton" style="padding:1%;">
-                            Google Now
+                            Google Search
                         </button>
     				</form>
      		</div>
@@ -164,112 +164,122 @@
      			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
             </div> -->
      	</div>
+
+
      	<div id="right-section" class="col-md-4">
      		<div id="add-journal">
-     			<form id="journal-create" action="{{ url 'journal:create' }}" method="post">
-     				<textarea rows="8" cols="40" name="" placeholder="Add a diary entry or a note here"></textarea>
-     				<input type="submit" value="Add entry">
+     			<form id="journal-create" action="{% url 'journal:create' %}" method="post">
+                {% csrf_token %}
+                {% if journal_form %}
+
+                    <table>
+                        {{ journal_form.as_table }}
+         				<!-- <textarea rows="8" cols="40" name="content" placeholder="Add a diary entry or a note here"></textarea> -->
+                        <tr><td><input type="submit" value="Add entry"></td></tr>
+                    </table>
+                    <!-- <input type="checkbox" name="is_protected"/> -->
+                {% endif %}
+     				
      			</form>
      		</div>
-     		<div id="your-journal">
-     			<form>
-     				<input type="submit" value="Get me my Journals">
+     		<div id="your-journals">
+                <div class="journal-block-sample">
+                    <div class="journal-block-id"></div>
+                    <h3 class="journal-block-title"></h3>
+                    <div class="journal-feeling-wrapper">
+                        <span>Feeling:&nbsp;</span>
+                        <span class="journal-block-feeling"></span>
+                    </div>
+                    <div class="journal-block-content"></div>
+                    <input type="hidden" class="journal-block-isprotected" value=""/>
+                </div>
+
+
+                <button onclick="javascript:getJournalEntries();">Get journals</button>
+     			<form id="journal-list-form" action="{% url 'journal:show' %}" method="post">
+     				{% csrf_token %}
+                    <div id="journal-list">
+                        <p>Loading...</p>
+                    </div>
      			</form>
      		</div>
      	</div>
     </div>
 </div>
 <script> 
-        // wait for the DOM to be loaded 
-        $(function() {
-            // bind 'myForm' and provide a simple callback function 
-            $('#today-create').ajaxForm({
-                success: function(response){
-                    console.log(JSON.stringify(response));
-                    if(response.status == "success"){
-                        var todoid = response.data.id;
-                        var title = response.data.title;
-                        // console.log('id:' + todoid + ', title' + title);
-                        var new_todo = $('.todo-block-sample')
-                                            .clone()
-                                            .removeClass('todo-block-sample')
-                                            .addClass('todo-block');
-                        new_todo.find('.todo-block-id').attr('value', todoid);
-                        new_todo.find('.todo-block-title').html(title);
-                        // console.log(new_todo.html());
-                        new_todo.prependTo('#todo-todays');
-                        new_todo.hide().fadeIn('slow');
-                        attachDoneListeners(new_todo);
-                    }else{
-                        console.log(JSON.stringify(response.errors));
-                    }
-                    $('#today-create').resetForm();
-                },
+
+    // fetch list of entries
+    function getJournalEntries(){
+        $.get('/journal/list')
+            .done(function(response){
+                console.log(JSON.stringify(response))
+                var block = $('#journal-list');
+                block.html('');
+                var len = response.data.length;
+                //console.log(len);
+                for(var i=0; i<len; i++){
+                    todoid = response.data[i].id;
+                    title = response.data[i].title;
+                    content  = response.data[i].content;
+                    feeling  = response.data[i].feeling;
+                    is_protected = response.data[i].is_protected;
+                    var new_entry = $('.journal-block-sample')
+                                        .clone()
+                                        .removeClass('journal-block-sample')
+                                        .addClass('journal-block')
+                    new_entry.find('.journal-block-id').attr('value', todoid);
+                    new_entry.find('.journal-block-title').html(title);
+                    new_entry.find('.journal-block-content').html(content);
+                    new_entry.find('.journal-block-feeling').html(feeling);
+                    new_entry.find('.journal-block-isprotected').attr('value', is_protected);
+                    new_entry.appendTo('#journal-list');
+                    attachDoneListeners(new_entry);
+                }
+            })
+            .fail(function(response){
+                alert(response.status);
             });
+    }
 
 
-            function attachDoneListeners(elem){
-                $(elem).ajaxForm({
-                    success: function(response, status, xhr, jqForm){
-                        console.log(JSON.stringify(response));
-                        if(response.status == "success"){
-                            jqForm.find('.todo-block-title').addClass('todo-done');
-                            jqForm.fadeOut('slow', function(){$(this).remove();});
-                        }else{
-                            alert('There was a Server issue');
-                        }
-                    },
-                }); 
-            }
 
 
-            // fetch list of entries
-            function getJournalEntries(){
-                $.get('/journal/list')
-                    .done(function(response){
-                        //console.log(JSON.stringify(response))
-                        var block = $('#journal-list');
-                        block.html('');
-                        var len = response.data.length;
-                        //console.log(len);
-                        for(var i=0; i<len; i++){
-                            todoid = response.data[i].id;
-                            title = response.data[i].title;
-                            var new_todo = $('.todo-block-sample')
-                                                .clone()
-                                                .removeClass('todo-block-sample')
-                                                .addClass('todo-block')
-                            new_todo.find('.todo-block-id').attr('value', todoid);
-                            new_todo.find('.todo-block-title').html(title);
-                            new_todo.appendTo('#todo-todays');
-                            attachDoneListeners(new_todo);
-                        }
-                    })
-                    .fail(function(response){
-                        alert(response.status);
-                    });
-            }
+    // wait for the DOM to be loaded 
+    $(function() {
+        // bind 'myForm' and provide a simple callback function 
+        $('#journal-create').ajaxForm({
+            success: function(response){
+                console.log(JSON.stringify(response));
+                if(response.status == "success"){
+                    var todoid = response.data.id;
+                    var title = response.data.title;
+                    // console.log('id:' + todoid + ', title' + title);
+                    var new_todo = $('.todo-block-sample')
+                                        .clone()
+                                        .removeClass('todo-block-sample')
+                                        .addClass('todo-block');
+                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-title').html(title);
+                    // console.log(new_todo.html());
+                    new_todo.prependTo('#todo-todays');
+                    new_todo.hide().fadeIn('slow');
+                    attachDoneListeners(new_todo);
+                }else{
+                    console.log(JSON.stringify(response.errors));
+                }
+                $('#today-create').resetForm();
+            },
+        });
 
-
-            // function todoDone(id){
-            //     todoid = $(this).parent().attr('data-id')
-            //     $.post('/todo/done', {'id': id})
-            //         .done(function(response){
-            //             if(response.status == "success"){
-            //                 var todoid = '#todo-' + response.data.id;
-            //                 $(todoid).parent().fadeOut();
-            //             }else{
-            //                 alert('There was a Server issue' + response.errors);
-            //             }
-            //         })
-            //         .fail(function(response){
-            //             alert(response.status);
-            //         });
-            // }           
-
-        }); 
+    }); 
     </script> 
     <style>
+        #your-journals{
+            margin: 15px;
+            padding: 10px;
+            background-color: maroon;
+            color: white;
+        }
         .journal-block-sample{
             display: none;
         }

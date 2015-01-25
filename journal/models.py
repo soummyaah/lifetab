@@ -12,7 +12,7 @@ class Entry(TimeStampedModel):
 
 	is_protected = models.BooleanField(default=False)
 	title = models.CharField(max_length=2000)
-	content = models.CharField(max_length=100000)
+	content = models.TextField(max_length=100000)
 	
 	feeling = models.CharField(max_length=4,
 								choices=FEELING_CHOICES,

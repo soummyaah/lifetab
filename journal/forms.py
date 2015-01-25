@@ -4,4 +4,4 @@ from models import Entry
 class AddEntryForm(forms.ModelForm):
 	class Meta:
 		model = Entry
-		fields = ['is_protected', 'title', 'content', 'feeling']
+		fields = ['feeling', 'title', 'content', 'is_protected',]
