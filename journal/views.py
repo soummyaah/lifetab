@@ -57,17 +57,17 @@ class EntryDetail(AjaxableResponseMixin, DetailView):
 
 # method stubs to be used for testing of ajax
 
-def EntryCreate(request):
+def entryCreate(request):
 	return JsonResponse({'status': success})
 
-def EntryUpdate(request):
+def entryUpdate(request):
 	return JsonResponse({'status': success})
 
-def EntryDelete(request):
+def entryDelete(request):
 	return JsonResponse({'status': success})
 
-def EntryList(request):
+def entryList(request):
 	return JsonResponse({'status': success})
 
-def EntryDetail(request):
+def entryDetail(request):
 	return JsonResponse({'status': success})
