@@ -170,46 +170,72 @@
      		<div id="add-journal">
      			<form id="journal-create" action="{% url 'journal:create' %}" method="post">
                 {% csrf_token %}
+                <div id="journal-message"></div>
                 {% if journal_form %}
-
                     <table>
                         {{ journal_form.as_table }}
          				<!-- <textarea rows="8" cols="40" name="content" placeholder="Add a diary entry or a note here"></textarea> -->
-                        <tr><td><input type="submit" value="Add entry"></td></tr>
+                        <tr><td><input type="submit" value="Add entry" id="journal-submit-button"></td></tr>
                     </table>
                     <!-- <input type="checkbox" name="is_protected"/> -->
                 {% endif %}
      				
      			</form>
      		</div>
-     		<div id="your-journals">
-
-                <!-- Sample div for Journal display -->
-                <div class="journal-block-sample">
-                    <h3 class="journal-block-title"></h3>
-                    <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
-                    <div class="journal-feeling-wrapper">
-                        <span>Feeling:&nbsp;</span>
-                        <span class="journal-block-feeling"></span>
-                    </div>
-                    <div class="journal-block-content"></div>
-                    <input type="hidden" class="journal-block-isprotected" value=""/>
-                </div>
-
-
-                <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
- 			    <div id="journal-list">
-                    <p>Loading...</p>
-                </div>
-     		</div>
      	</div>
     </div>
 </div>
+
+
+<!-- The Journal panel for slide in and slide out from the right -->
+<div id="journal-wrapper">
+    <div id="your-journals">
+        <!-- Sample div for Journal display -->
+        <div class="journal-block-sample">
+            <h3 class="journal-block-title"></h3>
+            <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
+            <div class="journal-feeling-wrapper">
+                <span>Feeling:&nbsp;</span>
+                <span class="journal-block-feeling"></span>
+            </div>
+            <div class="journal-block-content"></div>
+            <input type="hidden" class="journal-block-isprotected" value=""/>
+        </div>
+
+
+        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
+        <div id="journal-list">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <div id="journal-detail">
+        <h3 class="journal-block-title"></h3>
+        <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
+        <div class="journal-feeling-wrapper">
+            <span>Feeling:&nbsp;</span>
+            <span class="journal-block-feeling"></span>
+        </div>
+        <div class="journal-block-content"></div>
+        <input type="hidden" class="journal-block-isprotected" value=""/>
+    </div>
+</div>
+
+
+
 <script> 
 
     function editEntry(elem){
         jid = $(elem).attr('data-edit');
         console.log('Trying to edit journal id: ' + jid);
+        data = {'id': jid, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
+        $.post('/journal/show', data)
+            .done(function(response){
+                console.log(JSON.stringify(response));
+            })
+            .fail(function(response){
+                alert('An error occurred. Status code:' + response.status);
+            });
     }
 
     // fetch list of entries
@@ -246,34 +272,35 @@
             });
     }
 
-
+    function showEntry(elem){
+        var jid = $(elem).attr('data-id');
+        
+    }
 
 
     // wait for the DOM to be loaded 
     $(function() {
         // bind 'myForm' and provide a simple callback function 
         $('#journal-create').ajaxForm({
+            beforeSubmit: function(){
+                $('#journal-submit-button').attr('value', 'Saving...');
+            },
             success: function(response){
-                console.log(JSON.stringify(response));
+                // console.log(JSON.stringify(response));
                 if(response.status == "success"){
-                    var todoid = response.data.id;
-                    var title = response.data.title;
-                    // console.log('id:' + todoid + ', title' + title);
-                    var new_todo = $('.todo-block-sample')
-                                        .clone()
-                                        .removeClass('todo-block-sample')
-                                        .addClass('todo-block');
-                    new_todo.find('.todo-block-id').attr('value', todoid);
-                    new_todo.find('.todo-block-title').html(title);
-                    // console.log(new_todo.html());
-                    new_todo.prependTo('#todo-todays');
-                    new_todo.hide().fadeIn('slow');
-                    attachDoneListeners(new_todo);
+                    title = response.data.title;
+                    $("#journal-create").resetForm();
+                    ht = "Your entry <span><em>'"+ title +"'</em></span> has been saved!";
+                    $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
                 }else{
                     console.log(JSON.stringify(response.errors));
                 }
                 $('#today-create').resetForm();
+                $('#journal-submit-button').attr('value', 'Add Entry');
             },
+            error: function(response){
+                alert('An error occurred. Error code: ' + response.status);
+            }
         });
 
     }); 
@@ -284,6 +311,7 @@
             padding: 10px;
             background-color: maroon;
             color: gray;
+
         }
         .journal-block-sample{
             display: none;
@@ -293,6 +321,15 @@
         }
         .journal-block:hover{
             background-color: red;
+        }
+        #journal-message{
+            padding: 15px;
+            color: white;
+            background-color: green;
+            display: none;
+        }
+        #journal-message span{
+            font-style: italic;
         }
     </style>
 
