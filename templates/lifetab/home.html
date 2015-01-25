@@ -166,9 +166,9 @@
      	</div>
      	<div id="right-section" class="col-md-4">
      		<div id="add-journal">
-     			<form>
-     				<textarea rows="8" cols="40" name="new-journal" placeholder="Write your journal here :)"></textarea><br>
-     				<input type="submit" value="Yes, I want a new journal :D">
+     			<form id="journal-create" action="{{ url 'journal:create' }}" method="post">
+     				<textarea rows="8" cols="40" name="" placeholder="Add a diary entry or a note here"></textarea>
+     				<input type="submit" value="Add entry">
      			</form>
      		</div>
      		<div id="your-journal">
@@ -179,6 +179,107 @@
      	</div>
     </div>
 </div>
+<script> 
+        // wait for the DOM to be loaded 
+        $(function() {
+            // bind 'myForm' and provide a simple callback function 
+            $('#today-create').ajaxForm({
+                success: function(response){
+                    console.log(JSON.stringify(response));
+                    if(response.status == "success"){
+                        var todoid = response.data.id;
+                        var title = response.data.title;
+                        // console.log('id:' + todoid + ', title' + title);
+                        var new_todo = $('.todo-block-sample')
+                                            .clone()
+                                            .removeClass('todo-block-sample')
+                                            .addClass('todo-block');
+                        new_todo.find('.todo-block-id').attr('value', todoid);
+                        new_todo.find('.todo-block-title').html(title);
+                        // console.log(new_todo.html());
+                        new_todo.prependTo('#todo-todays');
+                        new_todo.hide().fadeIn('slow');
+                        attachDoneListeners(new_todo);
+                    }else{
+                        console.log(JSON.stringify(response.errors));
+                    }
+                    $('#today-create').resetForm();
+                },
+            });
+
+
+            function attachDoneListeners(elem){
+                $(elem).ajaxForm({
+                    success: function(response, status, xhr, jqForm){
+                        console.log(JSON.stringify(response));
+                        if(response.status == "success"){
+                            jqForm.find('.todo-block-title').addClass('todo-done');
+                            jqForm.fadeOut('slow', function(){$(this).remove();});
+                        }else{
+                            alert('There was a Server issue');
+                        }
+                    },
+                }); 
+            }
+
+
+            // fetch list of entries
+            function getJournalEntries(){
+                $.get('/journal/list')
+                    .done(function(response){
+                        //console.log(JSON.stringify(response))
+                        var block = $('#journal-list');
+                        block.html('');
+                        var len = response.data.length;
+                        //console.log(len);
+                        for(var i=0; i<len; i++){
+                            todoid = response.data[i].id;
+                            title = response.data[i].title;
+                            var new_todo = $('.todo-block-sample')
+                                                .clone()
+                                                .removeClass('todo-block-sample')
+                                                .addClass('todo-block')
+                            new_todo.find('.todo-block-id').attr('value', todoid);
+                            new_todo.find('.todo-block-title').html(title);
+                            new_todo.appendTo('#todo-todays');
+                            attachDoneListeners(new_todo);
+                        }
+                    })
+                    .fail(function(response){
+                        alert(response.status);
+                    });
+            }
+
+
+            // function todoDone(id){
+            //     todoid = $(this).parent().attr('data-id')
+            //     $.post('/todo/done', {'id': id})
+            //         .done(function(response){
+            //             if(response.status == "success"){
+            //                 var todoid = '#todo-' + response.data.id;
+            //                 $(todoid).parent().fadeOut();
+            //             }else{
+            //                 alert('There was a Server issue' + response.errors);
+            //             }
+            //         })
+            //         .fail(function(response){
+            //             alert(response.status);
+            //         });
+            // }           
+
+        }); 
+    </script> 
+    <style>
+        .journal-block-sample{
+            display: none;
+        }
+        .journal-block{
+            display: block;
+        }
+    </style>
+
+
+
 
  <p>
   
