@@ -53,8 +53,6 @@ class EntryDetail(View):
 	template_name = 'nothing.html'
 
 
-
-
 # method stubs to be used for testing of ajax
 
 def entryCreate(request):
@@ -67,7 +65,6 @@ def entryCreate(request):
 		data['is_protected'] = True
 	else:
 		data['is_protected'] = False
-
 
 	return JsonResponse({'status': 'success', 'data': data})
 
@@ -83,7 +80,8 @@ def entryUpdate(request):
 	return JsonResponse({'status': 'success', 'data':data})
 
 def entryDelete(request):
-	return JsonResponse({'status': 'success', 'id': request.POST['id']})
+	title = "This is a title"
+	return JsonResponse({'status': 'success', 'title': title})
 
 def entryList(request):
 	data = [
@@ -105,4 +103,11 @@ def entryList(request):
 	return JsonResponse({'status': 'success', 'data':data})
 
 def entryDetail(request):
-	return JsonResponse({'status': 'success', 'id': request.POST['id']})
+	data = {
+			'id':	request.POST['id'],
+			'title':	request.POST['title'],
+			'content':	request.POST['content'],
+			'feeling':	request.POST['feeling'],
+			'is_protected': request.POST['is_protected'],
+		}
+	return JsonResponse({'status': 'success', 'data': data})

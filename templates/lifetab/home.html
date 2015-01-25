@@ -4,18 +4,18 @@
 
 {% if user and not user.is_anonymous %}
 
-    <style>
-        .todo-block-sample{
-            display: none;
-        }
-        .todo-block{
-            display: block;
-        }
-        .todo-done{
-            text-decoration: line-through;
-        }
-    </style>
- <div id="wrapper">
+<style>
+    .todo-block-sample{
+        display: none;
+    }
+    .todo-block{
+        display: block;
+    }
+    .todo-done{
+        text-decoration: line-through;
+    }
+</style>
+<div id="wrapper">
  	<div class="row" id="header">
         <div class="col-md-2 col-md-push-10">
             <div style="width:60%; margin: 0% 0px 0% 50%; padding: 2%;">
@@ -134,10 +134,10 @@
     </div>
 </div>
 
- <p>
+<p>
   
-   {% else %}
-   <div class="content">
+    {% else %}
+    <div class="content">
        <div class="row">
             <div class="col-lg-6 col-lg-push-3">
                 <div class="alignment">
@@ -194,6 +194,9 @@
                 }
                 $('#today-create').resetForm();
             },
+            error: function(){
+
+            }
         });
 
 
@@ -310,7 +313,7 @@
         // bind 'myForm' and provide a simple callback function 
         $('#journal-create').ajaxForm({
             beforeSubmit: function(){
-                $('#journal-submit-button').attr('value', 'Saving...');
+                $('#journal-submit-button').attr('value', 'Saving...').prop('disabled', true);
             },
             success: function(response){
                 // console.log(JSON.stringify(response));
@@ -323,7 +326,7 @@
                     console.log(JSON.stringify(response.errors));
                 }
                 $('#today-create').resetForm();
-                $('#journal-submit-button').attr('value', 'Add Entry');
+                $('#journal-submit-button').attr('value', 'Add Entry').prop('disabled', false);
             },
             error: function(response){
                 alert('An error occurred. Error code: ' + response.status);

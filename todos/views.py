@@ -66,7 +66,6 @@ class TodoUpdate(View):
 		except Todo.DoesNotExist:
 			return JsonResponse({'status': 'error', 'errors': 'Todo does not exist'})
 
-
 		if request.is_ajax():
 			form = AddTodoForm(request.POST, instance=todo)
 			if form.is_valid():

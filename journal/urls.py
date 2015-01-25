@@ -3,7 +3,7 @@ from views import *
 
 
 # urlpatterns = patterns('',
-# 	url(r'^create', EntryCreate, name="create"),
+# 	url(r'^create', EntryCreate.as_view(), name="create"),
 # 	url(r'^edit', EntryUpdate.as_view(), name="edit"),
 # 	url(r'^delete', EntryDelete.as_view(), name="delete"),
 # 	url(r'^list', EntryList.as_view(), name="list"),
