@@ -58,13 +58,13 @@ class EntryDetail(View):
 # method stubs to be used for testing of ajax
 
 def entryCreate(request):
-	return JsonResponse({'status': success})
+	return JsonResponse({'status': 'success'})
 
 def entryUpdate(request):
-	return JsonResponse({'status': success})
+	return JsonResponse({'status': 'success'})
 
 def entryDelete(request):
-	return JsonResponse({'status': success})
+	return JsonResponse({'status': 'success'})
 
 def entryList(request):
 	data = [
@@ -83,7 +83,7 @@ def entryList(request):
 			'is_protected': True,
 		},
 	]
-	return JsonResponse({'status': success, 'data':data})
+	return JsonResponse({'status': 'success', 'data':data})
 
 def entryDetail(request):
-	return JsonResponse({'status': success})
+	return JsonResponse({'status': 'success'})

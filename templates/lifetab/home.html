@@ -183,9 +183,11 @@
      			</form>
      		</div>
      		<div id="your-journals">
+
+                <!-- Sample div for Journal display -->
                 <div class="journal-block-sample">
-                    <div class="journal-block-id"></div>
                     <h3 class="journal-block-title"></h3>
+                    <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
                     <div class="journal-feeling-wrapper">
                         <span>Feeling:&nbsp;</span>
                         <span class="journal-block-feeling"></span>
@@ -195,30 +197,33 @@
                 </div>
 
 
-                <button onclick="javascript:getJournalEntries();">Get journals</button>
-     			<form id="journal-list-form" action="{% url 'journal:show' %}" method="post">
-     				{% csrf_token %}
-                    <div id="journal-list">
-                        <p>Loading...</p>
-                    </div>
-     			</form>
+                <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
+ 			    <div id="journal-list">
+                    <p>Loading...</p>
+                </div>
      		</div>
      	</div>
     </div>
 </div>
 <script> 
 
+    function editEntry(elem){
+        jid = $(elem).attr('data-edit');
+        console.log('Trying to edit journal id: ' + jid);
+    }
+
     // fetch list of entries
     function getJournalEntries(){
         $.get('/journal/list')
             .done(function(response){
-                console.log(JSON.stringify(response))
+                console.log(JSON.stringify(response));
+                $("#get-journals-button").html('Get Journals');
                 var block = $('#journal-list');
                 block.html('');
                 var len = response.data.length;
                 //console.log(len);
                 for(var i=0; i<len; i++){
-                    todoid = response.data[i].id;
+                    jid = response.data[i].id;
                     title = response.data[i].title;
                     content  = response.data[i].content;
                     feeling  = response.data[i].feeling;
@@ -227,16 +232,16 @@
                                         .clone()
                                         .removeClass('journal-block-sample')
                                         .addClass('journal-block')
-                    new_entry.find('.journal-block-id').attr('value', todoid);
+                    new_entry.find('.journal-block-id').attr('data-edit', jid);
                     new_entry.find('.journal-block-title').html(title);
                     new_entry.find('.journal-block-content').html(content);
                     new_entry.find('.journal-block-feeling').html(feeling);
                     new_entry.find('.journal-block-isprotected').attr('value', is_protected);
                     new_entry.appendTo('#journal-list');
-                    attachDoneListeners(new_entry);
                 }
             })
             .fail(function(response){
+                $("#get-journals-button").html('Get Journals');
                 alert(response.status);
             });
     }
@@ -278,13 +283,16 @@
             margin: 15px;
             padding: 10px;
             background-color: maroon;
-            color: white;
+            color: gray;
         }
         .journal-block-sample{
             display: none;
         }
         .journal-block{
             display: block;
+        }
+        .journal-block:hover{
+            background-color: red;
         }
     </style>
 
