@@ -274,7 +274,20 @@
 
     function showEntry(elem){
         var jid = $(elem).attr('data-id');
-        
+        $.post("{% url 'journal:show' %}")
+            .done(function(response){
+                console.log(JSON.stringify(response));
+                if (response.status="success"){
+                    console.log('successfully fetched!');
+                }else if(response.status="error" && response.errors="password"){
+                    console.log('Incorrect passcode. Please try again!');
+                }else{
+                    console.log('Some random error occurred!');
+                }
+            })
+            .fail(function(response){
+                console.log(JSON.stringify(response));
+            });
     }
 
 
