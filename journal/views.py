@@ -1,38 +1,11 @@
 from django.shortcuts import render
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView, DetailView
+from django.views.generic import View
+from django.http import JsonResponse
 from django.core.urlresolvers import reverse, reverse_lazy
+
 from models import Entry
 
-class AjaxableResponseMixin(object):
-	"""
-	Mixin to add AJAX support to a form.
-	Must be used with an object-based FormView (e.g. CreateView)
-	"""
-	ajaxerror = {
-		'error': 'Not fetched from ajax or using post',
-	}
-	def form_invalid(self, form):
-		response = super(AjaxableResponseMixin, self).form_invalid(form)
-		if self.request.is_ajax() and self.request.method == 'POST':
-			return JsonResponse(form.errors, status=400)
-		else:
-			return JsonResponse(ajaxerror)
-
-	def form_valid(self, form):
-		# We make sure to call the parent's form_valid() method because
-		# it might do some processing (in the case of CreateView, it will
-		# call form.save() for example).
-		response = super(AjaxableResponseMixin, self).form_valid(form)
-		if self.request.is_ajax() and self.request.method == 'POST':
-			data = build_return_data()
-			return JsonResponse(response)
-		else:
-			return JsonResponse(ajaxerror)
-
-	def build_return_data(self):
-		pass
-
+# Main class based methods to be used
 class EntryCreate(AjaxableResponseMixin, CreateView):
 	model = Entry
 	template_name = 'nothing.html'
@@ -78,3 +51,23 @@ class EntryList(AjaxableResponseMixin, ListView):
 class EntryDetail(AjaxableResponseMixin, DetailView):
 	model = Entry
 	template_name = 'nothing.html'
+
+
+
+
+# method stubs to be used for testing of ajax
+
+def EntryCreate(request):
+	return JsonResponse({'status': success})
+
+def EntryUpdate(request):
+	return JsonResponse({'status': success})
+
+def EntryDelete(request):
+	return JsonResponse({'status': success})
+
+def EntryList(request):
+	return JsonResponse({'status': success})
+
+def EntryDetail(request):
+	return JsonResponse({'status': success})
