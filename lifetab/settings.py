@@ -38,7 +38,6 @@ DEFAULT_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'lifetab',
 )
 
 THIRD_PARTY_APPS = (
@@ -46,6 +45,7 @@ THIRD_PARTY_APPS = (
     )
 
 LOCAL_APPS = (
+    'lifetab',
     'journal',
     'todos',
 )

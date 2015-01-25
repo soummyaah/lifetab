@@ -39,10 +39,11 @@ class TodoCreate(View):
 		if request.is_ajax():
 			form = AddTodoForm(request.POST)
 			if form.is_valid():
-				print request.POST['title']
+				# print request.POST['title']
 				# from datetime import datetime
-				td = Todo.objects.create(title=request.POST['title'])
-				td.save()
+				# td = Todo.objects.create(title=request.POST['title'])
+				td = form.save()
+				# td.save()
 				response_data = {'status': 'success',
 									'data':	{
 											'id': td.id,
@@ -50,7 +51,7 @@ class TodoCreate(View):
 											},
 								}
 			else:
-				response_data = {'status': 'success', 'errors': form.errors}
+				response_data = {'status': 'error', 'errors': form.errors}
 			return JsonResponse(response_data)
 		else:
 			data = {
@@ -72,7 +73,7 @@ class TodoUpdate(View):
 				from datetime import datetime
 				id = form.cleaned_data['id']
 				todo = Todo.objects.get(pk=id)
-				todo.title, todo.notes = form.cleaned_data['title'], form.cleaned_data['notes']
+				todo.title = form.cleaned_data['title']
 				todo.save()
 				response_data = {'status': 'success',
 									'data':{'id': todo.pk,
