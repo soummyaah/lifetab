@@ -14,14 +14,6 @@
     .todo-done{
         text-decoration: line-through;
     }
-    #journals-panel{
-        background-color: #555;
-        height: 100%;
-        width: 430px;
-        position: absolute;
-        right: -440px;
-        top: 55px;
-    }
     .modal-backdrop.in{
         opacity: 0.5;
         z-index: 0;
@@ -112,131 +104,108 @@
   </div>
 </div>
     <hr>
-    <div class="row" style="padding:2% 2%;">
-     	<div id="left-section" class="col-md-4">
-            <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
-         		<div id="today-box" class="sticky">
-         			<div class="heading">
-                        <h3>TO-DOS</h3>
-         			</div>
-                    <form action="{% url 'todo:create' %}" id="today-create" method="post">
-                        <div class="form-group">
-                            {% csrf_token %}
-                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
-                            <input type="submit" style="display:none"/>
-                        </div>
-                    </form>
-                    <div id="samples">
-                        <form action="{% url 'todo:done' %}" method="post" class="todo-block-sample">
-                            {% csrf_token %}
-                            <input type="submit" value="X"/>
-                            <input type="hidden" class="todo-block-id" name="id" value="" />
-                            <span class="todo-block-title"></span>
-                        </form>
-
-                        <!-- Sample div for Journal display -->
-                        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo" onclick="javascript:showEntry(this);" data-id="">
-                            <h3 class="journal-block-title"></h3>
-                            <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
-                            <div class="journal-feeling-wrapper">
-                                <span>Feeling:&nbsp;</span>
-                                <span class="journal-block-feeling"></span>
-                            </div>
-                            <div class="journal-block-content"></div>
-                            <input type="hidden" class="journal-block-isprotected" value=""/>
-                        </li>
+<div class="row" style="padding:2% 2%;">
+   	<div id="left-section" class="col-md-4">
+        <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
+            <div id="today-box" class="sticky">
+     			<div class="heading">
+                    <h3>TO-DOS</h3>
+     			</div>
+                <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                    <div class="form-group">
+                        {% csrf_token %}
+                        <input type="text" name="title" placeholder="What do you want to do?"/><br>
+                        <input type="submit" style="display:none"/>
                     </div>
+                </form>
+                <div id="samples">
+                    <form action="{% url 'todo:done' %}" method="post" class="todo-block-sample">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-error g-uncheck" onclick="javascript:$(this).removeClass('g-uncheck').addClass('g-check');" value=""/>
+                        <input type="hidden" class="todo-block-id" name="id" value="" />
+                        <span class="todo-block-title"></span>
+                    </form>
 
-                    <ul id="today-ul">
-                        <div id="todo-todays"></div>
-             		</ul>
+                    <!-- Sample div for Journal display -->
+                    <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo" onclick="javascript:showEntry(this);" data-id="">
+                        <h3 class="journal-block-title"></h3>
+                        <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
+                        <div class="journal-feeling-wrapper">
+                            <span>Feeling:&nbsp;</span>
+                            <span class="journal-block-feeling"></span>
+                        </div>
+                        <div class="journal-block-content"></div>
+                        <input type="hidden" class="journal-block-isprotected" value=""/>
+                    </li>
+                </div>
+
+                <div id="today-ul">
+                    <div id="todo-todays"></div>
          		</div>
-            </div>
-            <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
-         		<div id="future-box" class="sticky">
+     		</div>
+        </div>
+            <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
+         		<div id="future-box">
          			<div class="heading">
-         				<strong>FUTURE</strong>
+         				<h3>FUTURE</h3>
          			</div>
                     <form action="{% url 'todo:create' %}" id="future-create" method="post">
                         <div class="form-group">
                             {% csrf_token %}
-                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
+                            <input type="text" id="future-date" name="due" placeholder="Choose a due date"/><br>
+                            <input type="text" name="title" placeholder="What do you want done?"/><br>
                             <input type="submit" style="display:none"/>
                         </div>
                     </form>
-                    <ul id="future-ul">
+                    <div id="future-ul">
                         <div id="todo-futures"></div>
-                    </ul>
+                    </div>
          		</div>
             </div>
      	</div>
      	<div id="center-section" class="col-md-4">
      		<div id = "google-search" style="margin: 20% 0 0 0">
-    				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
-    		        	<input type="text" class="tftextinput" name="q" size="30" maxlength="120" style="padding:1%;">
-
-                        <button type="submit" value="search" class="tfbutton btn btn-danger" style="padding:1%;">
-                            Google Search
-                        </button>
-    				</form>
+				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
+		        	<input type="text" class="tftextinput" name="q" size="30" maxlength="120">
+                    <button type="submit" value="search" class="tfbutton btn btn-danger">Google Search</button>
+				</form>
      		</div>
-     		<!-- <div id = "clock">
-     			<iframe src="http://free.timeanddate.com/clock/i4i7et7v/n1648/szw300/szh300/hocfff/hbw0/cf100/hgr0/fas20/facfff/fdi92/mqc000/mqs2/mql3/mqw4/mqd70/mhc000/mhs2/mhl3/mhw4/mhd70/mmv0/hhs3/hms3/hsc00f" frameborder="0" width="302" height="306"></iframe>
-            </div> -->
      	</div>
 
 
-     	<div id="right-section" class="col-md-4">
-     		<div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
+    <div id="right-section" class="col-md-4">
+	   <div class="row">
             <div id="add-journal">
-     			<form id="journal-create" action="{% url 'journal:edit' %}" method="post">
-                {% csrf_token %}
-                <div id="journal-message"></div>
-                {% if journal_form %}
-                    <table class="table table-striped">
-                        <input type="hidden" name="id" value=""/>
-                        {{ journal_form.as_table }}
-         				<!-- <textarea rows="8" cols="40" name="content" placeholder="Add a diary entry or a note here"></textarea> -->
-                        <tr><td><input type="submit" value="Add entry" id="journal-submit-button"></td></tr>
-                    </table>
-                    <!-- <input type="checkbox" name="is_protected"/> -->
-                {% endif %}
-     			<!-- <form action="{% url 'todo:create' %}" id="today-create" method="post">
-                            {% csrf_token %}
-                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
-                            <input type="submit" style="display:none"/>
-                        </form>	 -->
-     			</form>
-     		</div>
+            <h3>ADD JOURNAL</h3>
+                <form id="journal-create" action="{% url 'journal:edit' %}" method="post">
+                    {% csrf_token %}
+                    <div id="journal-message"></div>
+                    {% if journal_form %}
+                        <table class="table">
+                            <input type="hidden" name="id" value=""/>
+                            {{ journal_form.as_table }}
+                            <tr><td colspan="2" style="text-align:center;"><input type="submit" style="padding: 3px 25px;" value="Add entry" id="journal-submit-button"></td></tr>
+                        </table>
+                    {% endif %}
+                </form>
+            </div>
         </div>
-        <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
-            <div id="journal-wrapper">
-                <div id="olaf-your-journals">
-                    
-
-
-        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
-        <!-- <button id="get-journals-panel-button" onclick="javascript:$(this).html('Fetching...');openJournalsPanel()">Get journals-Panel</button> -->
-        
-    </div>
-            
-        </div>    
-     	</div>
     </div>
 </div>
 
 
 
 
-
-<div class="panel panel-default" id="journals-panel">
-    <div class="panel-heading">All Your Journals
-        <div class="btn-close btn btn-default" style="float:right;" onclick="closeJournalsPanel()">x</div>
-    </div>
-    <div id="your-journals">
-        <ul class="list-group" id="journal-list">
-            Loading...
-        </ul>
+<div id="panel-wrapper">
+    <div class="panel panel-default" id="journals-panel">
+        <div class="panel-heading">All Your Journals
+            <div class="btn-close btn btn-default" style="float:right;" onclick="closeJournalsPanel()">x</div>
+        </div>
+        <div id="your-journals">
+            <ul class="list-group" id="journal-list">
+                Loading...
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -356,7 +325,7 @@
                         ht = "Your entry <span><em>'"+ title +"'</em></span> Could not be deleted!<br/>Details: " + errors;
                         closeJournalsPanel();
                         $("#myModal").find('i.close').click();
-                        $("#journal-message").hide().html(ht).fadeIn('fast', function(){$(this).hide('slow');});
+                        $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
                     }
                 })
                 .fail(function(response){
@@ -368,13 +337,13 @@
 
 
     function openJournalsPanel() {
-        $("#journals-panel").animate({'right': '0px'}, 'slow');
+        $("#journals-panel").animate({'margin-right': '0px'}, 'slow');
     }
 
     function closeJournalsPanel() {
         console.log("Hide called");
         setTimeout(function(){
-            $("#journals-panel").animate({'right': '-440px'}, 'fast');
+            $("#journals-panel").animate({'margin-right': '-440px'}, 'fast');
         }, 500);
     }
 
@@ -420,7 +389,7 @@
                 }else{
                     console.log(JSON.stringify(response));
                 }
-                $('#today-create').resetForm();
+                $('#today-create').clearForm();
             },
             error: function(){
             }
@@ -476,7 +445,7 @@
                 }else{
                     console.log(JSON.stringify(response.errors));
                 }
-                $('#future-create').resetForm();
+                $('#future-create').clearForm();
             },
             error: function(){
             }
@@ -510,7 +479,7 @@
                  alert(response.status);
             });
 
-
+        $("#future-date").datepicker({'minDate': '+1d', 'defaultDate': '+1d'});
 
     }); 
 
@@ -567,7 +536,7 @@
                 }else{
                     console.log(JSON.stringify(response));
                 }
-                $('#today-create').resetForm();
+                $('#today-create').clearForm();
                 $('#journal-submit-button').attr('value', 'Add Entry').prop('disabled', false);
             },
             error: function(response){
@@ -594,7 +563,7 @@
         font-style: italic;
     }
     #your-journals{
-        overflow: scroll;
+        overflow: auto;
     }
 </style>
 {% endblock %}
