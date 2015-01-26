@@ -48,6 +48,7 @@ class TodoCreate(View):
 									'data':	{
 											'id': td.id,
 											'title': td.title,
+											'due': td.due,
 											},
 								}
 			else:
