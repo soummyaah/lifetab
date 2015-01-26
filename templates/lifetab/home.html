@@ -19,7 +19,7 @@
         height: 100%;
         width: 430px;
         position: absolute;
-        right: 0px;
+        right: -440px;
         top: 55px;
     }
 </style>
@@ -130,7 +130,7 @@
         </div>
 
 
-        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();showEntries()">Get journals</button>
+        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
         <button id="get-journals-panel-button" onclick="javascript:$(this).html('Fetching...');openJournalsPanel()">Get journals-Panel</button>
         
         <div id="journal-list">
@@ -175,7 +175,7 @@
 
 <div class="panel panel-default" id="journals-panel">
     <div class="panel-heading">All Your Journals
-        <div class="btn-close btn btn-default" style="float:right;" onclick="close-journals-panel()">x</div>
+        <div class="btn-close btn btn-default" style="float:right;" onclick="closeJournalsPanel()">x</div>
     </div>
     <ul class="list-group"><!-- <table class="table table-striped"> -->
         <li class="list-group-item"><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
@@ -243,15 +243,15 @@
 // }
 
 function openJournalsPanel() {
-    document.getElementById("journals-panel").style.display=="block";
+    $("#journals-panel").animate({'right': '0px'}, 'slow');
 }
 
-function close-journals-panel() {
-    document.getElementById("journals-panel").style.display=="none";
+function closeJournalsPanel() {
+    $("#journals-panel").animate({'right': '-440px'}, 'slow');
 }
 $('#test2').BootSideMenu({side:"right"});
 </script>
-    
+
 </div>
 
 <p>
@@ -283,6 +283,21 @@ $('#test2').BootSideMenu({side:"right"});
 {% block scripts %}
 <script> 
     // wait for the DOM to be loaded 
+    
+    function attachDoneListeners(elem){
+        $(elem).ajaxForm({
+            success: function(response, status, xhr, jqForm){
+                console.log(JSON.stringify(response));
+                if(response.status == "success"){
+                    jqForm.find('.todo-block-title').addClass('todo-done');
+                    jqForm.fadeOut('slow', function(){$(this).remove();});
+                }else{
+                    alert('There was a Server issue');
+                }
+            },
+        }); 
+    }
+
     $(function() {
         // bind 'myForm' and provide a simple callback function 
         $('#today-create').ajaxForm({
@@ -296,7 +311,7 @@ $('#test2').BootSideMenu({side:"right"});
                                         .clone()
                                         .removeClass('todo-block-sample')
                                         .addClass('todo-block');
-                    new_todo.function() {};ind('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-id').attr('value', todoid);
                     new_todo.find('.todo-block-title').html(title);
                     // console.log(new_todo.html());
                     new_todo.prependTo('#todo-todays');
@@ -312,19 +327,6 @@ $('#test2').BootSideMenu({side:"right"});
         });
 -
 
-        function attachDoneListeners(elem){
-            $(elem).ajaxForm({
-                success: function(response, status, xhr, jqForm){
-                    console.log(JSON.stringify(response));
-                    if(response.status == "success"){
-                        jqForm.find('.todo-block-title').addClass('todo-done');
-                        jqForm.fadeOut('slow', function(){$(this).remove();});
-                    }else{
-                        alert('There was a Server issue');
-                    }
-                },
-            }); 
-        }
 
 
         // fetch today's stuff

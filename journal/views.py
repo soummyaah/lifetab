@@ -113,23 +113,23 @@ class EntryList(View):
 			return HttpResponse(JsonResponse(data))
 
 class EntryDetail(View):
-	#Not compelete
-	# def post(self, request):
-	# 	if request.is_ajax():
-	# 		try:
-	# 			id = request.POST['id']
-	# 			title = request.POST['title']
-	# 			content = request.POST['content']
-	# 			feeling = request.POST['feeling']
-	# 			is_protected = request.POST['is_protected']
-	# 			todo = Todo.objects.get(pk=pk)
-	# 			todo.delete()
-	# 			response_data = {'status': 'success', 'id': pk}
-	# 		except Todo.DoesNotExist:
-	# 			response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
-	# 		return JsonResponse(response_data)
-	# 	else:
-	# 		return JsonResponse({'error': 'Not fetched by AJAX'})
+	def post(self, request):
+		if request.is_ajax():
+			try:
+				id = request.POST['id']
+				title = request.POST['title']
+				content = request.POST['content']
+				feeling = request.POST['feeling']
+				is_protected = request.POST['is_protected']
+				todo = Todo.objects.get(pk=pk)
+				todo.delete()
+				response_data = {'status': 'success', 'id': pk}
+			except Todo.DoesNotExist:
+				response_data = {'status': 'error', 'errors' : 'That todo does not exist',}
+			return JsonResponse(response_data)
+		else:
+			response_data = {'status': 'error', 'errors' : 'Not fetched by AJAX',}
+			return JsonResponse(response_data)
 
 # method stubs to be used for testing of ajax
 
