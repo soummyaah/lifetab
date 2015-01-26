@@ -102,8 +102,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
-        <button type="button" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-primary journal-block-edit" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
+        <button type="button" class="btn btn-danger journal-block-delete"  onclick="javascript:deleteEntry(this);">Delete</button>
       </div>
     </div>
   </div>
@@ -130,6 +130,18 @@
                             <input type="hidden" class="todo-block-id" name="id" value="" />
                             <span class="todo-block-title"></span>
                         </form>
+
+                        <!-- Sample div for Journal display -->
+                        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
+                            <h3 class="journal-block-title"></h3>
+                            <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
+                            <div class="journal-feeling-wrapper">
+                                <span>Feeling:&nbsp;</span>
+                                <span class="journal-block-feeling"></span>
+                            </div>
+                            <div class="journal-block-content"></div>
+                            <input type="hidden" class="journal-block-isprotected" value=""/>
+                        </li>
                     </div>
 
                     <ul id="today-ul">
@@ -179,6 +191,7 @@
                 <div id="journal-message"></div>
                 {% if journal_form %}
                     <table class="table table-striped">
+                        <input type="hidden" name="id" value=""/>
                         {{ journal_form.as_table }}
          				<!-- <textarea rows="8" cols="40" name="content" placeholder="Add a diary entry or a note here"></textarea> -->
                         <tr><td><input type="submit" value="Add entry" id="journal-submit-button"></td></tr>
@@ -196,17 +209,7 @@
         <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
             <div id="journal-wrapper">
                 <div id="olaf-your-journals">
-        <!-- Sample div for Journal display -->
-        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
-            <h3 class="journal-block-title"></h3>
-            <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
-            <div class="journal-feeling-wrapper">
-                <span>Feeling:&nbsp;</span>
-                <span class="journal-block-feeling"></span>
-            </div>
-            <div class="journal-block-content"></div>
-            <input type="hidden" class="journal-block-isprotected" value=""/>
-        </li>
+                    
 
 
         <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
@@ -228,7 +231,7 @@
         <div class="btn-close btn btn-default" style="float:right;" onclick="closeJournalsPanel()">x</div>
     </div>
     <div id="your-journals">
-        <ul class="list-group" id="journal-list"><!-- <table class="table table-striped"> -->
+        <ul class="list-group" id="journal-list">
             Loading...
         </ul>
     </div>
@@ -266,16 +269,87 @@
 {% block scripts %}
 <script type="text/javascript">
 
-function openJournalsPanel() {
-    $("#journals-panel").animate({'right': '0px'}, 'slow');
-}
 
-function closeJournalsPanel() {
-    $("#journals-panel").animate({'right': '-440px'}, 'slow');
-}
-$('#test2').BootSideMenu({side:"right"});
+    function showEntry(elem){
+        var jid = $(elem).attr('data-id');
+        $.post("{% url 'journal:show' %}")
+            .done(function(response){
+                console.log(JSON.stringify(response));
+                if (response.status="success"){
+                    var entry_id = response.data.id;
+                    var entry_title = response.data.title;
+                    var entry_content = response.data.content;
+                    var entry_feeling = response.data.feeling;
+
+                    $('#journal-block').find('.journal-block-edit').attr('data-id', entry_id);
+                    $('#journal-block').find('.journal-block-delete').attr('data-id', entry_id);
+                    $('#journal-block').find('.journal-block-content').html(entry_content);
+                    $('#journal-block').find('.journal-block-feeling').html(entry_feeling);
+                    $('#journal-block').find('.journal-block-title').html(entry_title);
+
+                }else if(response.status=="error" && response.errors=="password"){
+                    console.log('Incorrect passcode. Please try again!');
+                }else{
+                    console.log('Some random error occurred!');
+                }
+            })
+            .fail(function(response){
+                console.log(JSON.stringify(response));
+            });
+    }
+
+    function editEntry(elem){
+        var entry_elem = $(elem);
+        var entry_id = entry_elem.closest('.journal-block-edit').attr('data-id');
+        var entry_title = entry_elem.closest('.journal-block-title').html();
+        var entry_content = entry_elem.closest('.journal-block-content').html();
+        var entry_feeling = entry_elem.closest('.journal-block-feeling').html();
+
+        var form = $('#journal-create');
+        form.find('.journal-block-feeling').find('option[value=' + entry_feeling + ']').attr('selected', 'selected');
+        form.find('option[name=content').html(entry_content);
+        form.find('option[name=title').attr('value', entry_title);
+
+        $("#myModal").find('button.close').click();
+    }
+
+    function deleteEntry(elem){
+        var entry_id = entry_elem.closest('.journal-block-edit').attr('data-id');
+        var entry_title = entry_elem.closest('.journal-block-title').html();
+        
+        var answer = confirm('Are you sure you want to delete the entry "' + entry_title + '"');
+        if(answer){
+            var post_data = {'id': entry_id, 'csrfmiddlewaretoken': "{{ csrf_token }}"};
+            $.post("{% url 'journal:delete' %}", post_data)
+                .done(function(response){
+                    if(response.status == "success"){
+                        $("#myModal").find('button.close').click();
+                        var title = response.data.title;
+                        ht = "Your entry <span><em>'"+ title +"'</em></span> has been Deleted!";
+                        $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
+                    }else{
+                        $("#myModal").find('button.close').click();
+                        var errors = response.errors;
+                        ht = "Your entry <span><em>'"+ title +"'</em></span> Could not be deleted!<br/>Details: " + errors;
+                        $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
+                    }
+                })
+                .fail(function(response){
+                    alert('Deletion failed due to system error! Please try again!\nError Code: ' + response.status);
+                });
+        }
+
+    }
 
 
+    function openJournalsPanel() {
+        $("#journals-panel").animate({'right': '0px'}, 'slow');
+    }
+
+    function closeJournalsPanel() {
+        $("#journals-panel").animate({'right': '-440px'}, 'slow');
+    }
+    $('#test2').BootSideMenu({side:"right"});
 
 </script>
 
@@ -460,25 +534,6 @@ $('#test2').BootSideMenu({side:"right"});
                 alert(response.status);
             });
     }
-
-    function showEntry(elem){
-        var jid = $(elem).attr('data-id');
-        $.post("{% url 'journal:show' %}")
-            .done(function(response){
-                console.log(JSON.stringify(response));
-                if (response.status="success"){
-                    console.log('successfully fetched!');
-                }else if(response.status=="error" && response.errors=="password"){
-                    console.log('Incorrect passcode. Please try again!');
-                }else{
-                    console.log('Some random error occurred!');
-                }
-            })
-            .fail(function(response){
-                console.log(JSON.stringify(response));
-            });
-    }
-
 
     // wait for the DOM to be loaded 
     $(function() {
