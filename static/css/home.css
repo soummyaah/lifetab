@@ -83,3 +83,39 @@ hr{
   -moz-box-shadow: 0px 0 3px rgba(0,0,0,0.1);
   box-shadow: 0px 0 3px rgba(0,0,0,0.1);
 }
+#right-section{
+
+}
+#add-journal{
+	margin-left: 10%;
+}
+#your-journal{
+	margin-top: 15%;
+	margin-left: 10%;
+}
+
+#your-journals{
+  margin: 15px;
+  padding: 10px;
+  background-color: maroon;
+  color: gray;
+
+}
+.journal-block-sample{
+  display: none;
+}
+.journal-block{
+  display: block;
+}
+.journal-block:hover{
+  background-color: red;
+}
+#journal-message{
+  padding: 15px;
+  color: white;
+  background-color: green;
+  display: none;
+}
+#journal-message span{
+  font-style: italic;
+}
