@@ -33,33 +33,34 @@ class EntryCreate(View):
 			return JsonResponse(response_data)
 
 class EntryUpdate(View):
-	def post(self, request, entry_id):
-		try:
-			entry = Entry.objects.get(pk=entry_id)
-		except Entry.DoesNotExist:
-			return JsonResponse({'status': 'error', 'errors': 'Entry does not exist'})
+	def post(self, request):
+		entry_id = request.POST['id'].strip();	
+
+		if entry_id:
+			try:
+
+				entry = Entry.objects.get(pk=int(entry_id))
+			except Entry.DoesNotExist:
+				return JsonResponse({'status': 'error', 'errors': 'Entry does not exist'})
+		else:
+			entry = Entry()
+
 		if request.is_ajax():
 			form = AddEntryForm(request.POST, instance=entry)
 			if form.is_valid():
 				#from datetime import datetime
-				id = form.cleaned_data['id']
-				entry = Entry.objects.get(pk=id)
-				entry.title = form.cleaned_data['title']
-				entry.content = form.cleaned_data['content']
-				entry.feeling = form.cleaned_data['feeling']
-				entry.is_protected = form.cleaned_data['is_protected']
-				entry.save()
+				entry = form.save()
 				response_data = {'status': 'success',
-									'data':{'id': id,
+									'data':{'id': entry.id,
 											'title': entry.title,
 											'content': entry.content,
-											'feeling': entry.feeling,
-											'is_protected': entry.is_protected
+											'feeling': entry.get_feeling_display(),
+											'is_protected': entry.is_protected,
 											}
 								}
 			else:
 				response_data = {'status': 'error', 'errors': form.errors}
-			return JsonResponse(form.errors)
+			return JsonResponse(response_data)
 		else:
 			data = {'status': 'error',
 				'errors': 'AJAX not used',
@@ -72,15 +73,15 @@ class EntryDelete(View):
 		if request.is_ajax():
 			try:
 				pk = request.POST['id']
-				title = request.POST['title']
+				# title = request.POST['title']
 				# content = request.POST['content']
 				# feeling = request.POST['feeling']
 				# is_protected = request.POST['is_protected']
 				entry = Entry.objects.get(pk=pk)
 				entry.delete()
 				response_data = {'status': 'success', 'data':{
-												'id': pk,
-												'title': title,
+												# 'id': pk,
+												'title': entry.title,
 												# 'content': content,
 												# 'feeling': feeling,
 												# 'is_protected': is_protected
@@ -101,7 +102,7 @@ class EntryList(View):
 			response_data = {'status': 'success'}
 			entry = []
 			for entry_obj in entry_objs:
-				entry_data = {'id': entry_obj.id, 'title': entry_obj.title, 'content': entry_obj.content, 'feeling': entry_obj.get_feeling_display, 'is_protected': entry_obj.is_protected}
+				entry_data = {'id': entry_obj.id, 'title': entry_obj.title, 'content': entry_obj.content, 'feeling': entry_obj.get_feeling_display(), 'is_protected': entry_obj.is_protected}
 				entry.append(entry_data)
 			response_data['data'] = entry
 			return JsonResponse(response_data)
@@ -125,7 +126,7 @@ class EntryDetail(View):
 											{'id': pk,
 											'title': entry.title,
 											'content': entry.content,
-											'feeling': entry.get_feeling_display,
+											'feeling': entry.get_feeling_display(),
 											'is_protected': entry.is_protected
 											}}
 			except Todo.DoesNotExist:

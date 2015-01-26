@@ -23,8 +23,11 @@
         top: 55px;
     }
     .modal-backdrop.in{
-        opacity:0;
-    filter:alpha(opacity=50)
+        opacity: 0.5;
+        z-index: 0;
+    }
+    #journal-block{
+        z-index: 25;
     }
 </style>
 
@@ -85,10 +88,10 @@
     <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div id="journal-detail" class="modal-content">
-      <div class="modal-header journal-block-title">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+    <div id="journal-block" class="modal-content">
+      <div class="modal-header">
+        <i class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></i>
+        <h4 class="modal-title journal-block-title" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
         <div >
@@ -102,8 +105,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary journal-block-edit" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
-        <button type="button" class="btn btn-danger journal-block-delete"  onclick="javascript:deleteEntry(this);">Delete</button>
+        <i type="button" class="btn btn-primary journal-block-edit" onclick="javascript:editEntry(this);" data-id="">Edit</i>
+        <i type="button" class="btn btn-danger journal-block-delete"  onclick="javascript:deleteEntry(this);" data-id="">Delete</i>
       </div>
     </div>
   </div>
@@ -132,7 +135,7 @@
                         </form>
 
                         <!-- Sample div for Journal display -->
-                        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
+                        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo" onclick="javascript:showEntry(this);" data-id="">
                             <h3 class="journal-block-title"></h3>
                             <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
                             <div class="journal-feeling-wrapper">
@@ -186,7 +189,7 @@
      	<div id="right-section" class="col-md-4">
      		<div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
             <div id="add-journal">
-     			<form id="journal-create" action="{% url 'journal:create' %}" method="post">
+     			<form id="journal-create" action="{% url 'journal:edit' %}" method="post">
                 {% csrf_token %}
                 <div id="journal-message"></div>
                 {% if journal_form %}
@@ -271,11 +274,14 @@
 
 
     function showEntry(elem){
-        var jid = $(elem).attr('data-id');
-        $.post("{% url 'journal:show' %}")
+        var entry_id = $(elem).attr('data-id');
+        var post_data = {'id': entry_id, 'csrfmiddlewaretoken': "{{ csrf_token }}"};
+            
+        $.post("{% url 'journal:show' %}", post_data)
             .done(function(response){
                 console.log(JSON.stringify(response));
                 if (response.status="success"){
+                    console.log("show_entry data:" + JSON.stringify(response));
                     var entry_id = response.data.id;
                     var entry_title = response.data.title;
                     var entry_content = response.data.content;
@@ -299,39 +305,58 @@
     }
 
     function editEntry(elem){
-        var entry_elem = $(elem);
-        var entry_id = entry_elem.closest('.journal-block-edit').attr('data-id');
-        var entry_title = entry_elem.closest('.journal-block-title').html();
-        var entry_content = entry_elem.closest('.journal-block-content').html();
-        var entry_feeling = entry_elem.closest('.journal-block-feeling').html();
+        // console.log(elem.html());        
+        var entry_elem = $('#journal-block');
+        var entry_id = entry_elem.find('.journal-block-edit').attr('data-id');
+        var entry_title = entry_elem.find('.journal-block-title').html();
+        var entry_content = entry_elem.find('.journal-block-content').html();
+        var entry_feeling = entry_elem.find('.journal-block-feeling').html();
 
+        //console.log(entry_elem.html());
         var form = $('#journal-create');
-        form.find('.journal-block-feeling').find('option[value=' + entry_feeling + ']').attr('selected', 'selected');
-        form.find('option[name=content').html(entry_content);
-        form.find('option[name=title').attr('value', entry_title);
+        // console.log(form.html());
+        form.find(':input[name=content]').html(entry_content);
+        form.find(':input[name=title]').attr('value', entry_title);
+        form.find(':input[name=id]').attr('value', entry_id);
+        options = form.find(':input[name=feeling]').find('option');
+        console.log(options);
+        feelings = {"happy":0, "sad":1, "nostalgic":2, "curious":3, "wonderful":4};
+        $(options[feelings[entry_feeling]]).attr('selected', 'selected');
 
-        $("#myModal").find('button.close').click();
+        $("#myModal").find('i.close').click();
+        closeJournalsPanel();
     }
 
     function deleteEntry(elem){
-        var entry_id = entry_elem.closest('.journal-block-edit').attr('data-id');
-        var entry_title = entry_elem.closest('.journal-block-title').html();
+        var entry_elem = $(elem);
+        var entry_id = $(elem).attr('data-id');
+        console.log(entry_id); 
+        entry_elem = entry_elem.parent().parent()
+        var entry_title = entry_elem.find('.journal-block-title').html();
         
         var answer = confirm('Are you sure you want to delete the entry "' + entry_title + '"');
         if(answer){
             var post_data = {'id': entry_id, 'csrfmiddlewaretoken': "{{ csrf_token }}"};
+            console.log(post_data)
             $.post("{% url 'journal:delete' %}", post_data)
                 .done(function(response){
                     if(response.status == "success"){
-                        $("#myModal").find('button.close').click();
+                        console.log(JSON.stringify(response));
+                        // $("#myModal").find('button.close').click();
                         var title = response.data.title;
                         ht = "Your entry <span><em>'"+ title +"'</em></span> has been Deleted!";
-                        $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
+                        closeJournalsPanel();
+                        $("#myModal").find('i.close').click();
+                        $("#journal-message").hide().html(ht).fadeIn('fast', function(){$(this).hide('slow');});
+                        
                     }else{
-                        $("#myModal").find('button.close').click();
+                        console.log(JSON.stringify(response));
+                        // $("#myModal").find('button.close').click();
                         var errors = response.errors;
                         ht = "Your entry <span><em>'"+ title +"'</em></span> Could not be deleted!<br/>Details: " + errors;
-                        $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
+                        closeJournalsPanel();
+                        $("#myModal").find('i.close').click();
+                        $("#journal-message").hide().html(ht).fadeIn('fast', function(){$(this).hide('slow');});
                     }
                 })
                 .fail(function(response){
@@ -347,9 +372,11 @@
     }
 
     function closeJournalsPanel() {
-        $("#journals-panel").animate({'right': '-440px'}, 'slow');
+        console.log("Hide called");
+        setTimeout(function(){
+            $("#journals-panel").animate({'right': '-440px'}, 'fast');
+        }, 500);
     }
-    $('#test2').BootSideMenu({side:"right"});
 
 </script>
 
@@ -391,7 +418,7 @@
                     new_todo.hide().fadeIn('slow');
                     attachDoneListeners(new_todo);
                 }else{
-                    console.log(JSON.stringify(response.errors));
+                    console.log(JSON.stringify(response));
                 }
                 $('#today-create').resetForm();
             },
@@ -487,19 +514,6 @@
 
     }); 
 
-    function editEntry(elem){
-        jid = $(elem).attr('data-edit');
-        console.log('Trying to edit journal id: ' + jid);
-        data = {'id': jid, 'csrfmiddlewaretoken': '{{ csrf_token }}' }
-        $.post('/journal/show', data)
-            .done(function(response){
-                console.log(JSON.stringify(response));
-            })
-            .fail(function(response){
-                alert('An error occurred. Status code:' + response.status);
-            });
-    }
-
     // fetch list of entries
     function getJournalEntries(){
         $.get('/journal/list')
@@ -520,6 +534,7 @@
                                         .clone()
                                         .removeClass('journal-block-sample')
                                         .addClass('journal-block')
+                                        .attr('data-id', jid);
                     new_entry.find('.journal-block-id').attr('data-edit', jid);
                     new_entry.find('.journal-block-title').html(title);
                     // new_entry.find('.journal-block-content').html(content);
@@ -545,12 +560,12 @@
             success: function(response){
                 // console.log(JSON.stringify(response));
                 if(response.status == "success"){
-                    title = response.data.title;
+                    var title = response.data.title;
                     $("#journal-create").resetForm();
                     ht = "Your entry <span><em>'"+ title +"'</em></span> has been saved!";
                     $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
                 }else{
-                    console.log(JSON.stringify(response.errors));
+                    console.log(JSON.stringify(response));
                 }
                 $('#today-create').resetForm();
                 $('#journal-submit-button').attr('value', 'Add Entry').prop('disabled', false);
