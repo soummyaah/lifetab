@@ -97,7 +97,7 @@
     <hr>
 <div class="row" style="padding:2% 2%;">
    	<div id="left-section" class="col-md-4">
-        <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
+        <div class="row" style="padding:0%; margin:0% 5% 5% 5%;">
             <div id="today-box" class="sticky">
                     <h3 class="heading">TO-DOS</h3>
                 <form action="{% url 'todo:create' %}" id="today-create" method="post">
@@ -133,7 +133,7 @@
          		</div>
      		</div>
         </div>
-            <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
+            <div class="row" style="padding:0%; margin:0% 5% 5% 5%;">
          		<div id="future-box">
          			<h3 class="heading">FUTURE</h3>
                     <form action="{% url 'todo:create' %}" id="future-create" method="post">
@@ -151,12 +151,13 @@
             </div>
      	</div>
      	<div id="center-section" class="col-md-4" style="margin: 0; padding: 0;">
-     		<div id = "google-search" style="margin: 250px auto 0 auto;padding: 0;">
+     		<div id = "google-search" style="margin: 150px auto 0 auto;padding: 0;">
 				<form id="tfnewsearch" method="get" action="http://www.google.com/search">
 		        	<input type="text" class="tftextinput" name="q" maxlength="240" style="width: 70%;margin: 0; padding: 0;font-size: 18px;padding: 3px;">
                     <button type="submit" value="search" class="tfbutton btn btn-danger">Google Search</button>
 				</form>
      		</div>
+            <div style="position: absolute;color: rgba(217, 83, 66, 1); left: 200px;bottom: -500px;font-size: 72px;text-shadow: 0 0 3px #000;border-bottom: 3px solid #FFF;box-shadow: 0 20px 20px #aaa;">LifeTab</div>
      	</div>
 
 
