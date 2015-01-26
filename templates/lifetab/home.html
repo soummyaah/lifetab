@@ -1,5 +1,7 @@
 {% extends 'lifetab/base.html' %}
 
+{% load staticfiles %}
+
 {% block main %}
 
 {% if user and not user.is_anonymous %}
@@ -42,7 +44,7 @@
     <div class="container-fluid">
         <!-- <div class="navbar-header"> -->
             <a class="navbar-brand" href="#" style="float: left;">
-                <img alt="LifeTab" src="http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2013/12/6/1386339580074/8e03d095-ae5d-446c-abb4-2865aef7d3bb-460x276.jpeg" height="30px"/>
+                <img alt="LifeTab" src="{%  static 'admin/img/LifeTab.png' %}" width="100px" style="margin-top:-2px;padding-top:10px;" />
             </a>
         <!-- </div> -->
         <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button type="button" class="btn btn-danger navbar-btn navbar-right" style="margin-right: 10px;">Log Out</button></a>
@@ -528,7 +530,7 @@
                 // console.log(JSON.stringify(response));
                 if(response.status == "success"){
                     var title = response.data.title;
-                    $("#journal-create").resetForm();
+                    $("#journal-create").clearForm();
                     ht = "Your entry <span><em>'"+ title +"'</em></span> has been saved!";
                     $("#journal-message").hide().html(ht).fadeIn('fast').delay(1000).hide('slow');
                 }else{
