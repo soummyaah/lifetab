@@ -41,11 +41,11 @@
 <div class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <!-- <div class="navbar-header"> -->
-            <a class="navbar-brand" href="#">
-                <img alt="LifeTab" src="http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2013/12/6/1386339580074/8e03d095-ae5d-446c-abb4-2865aef7d3bb-460x276.jpeg" height="30px">
+            <a class="navbar-brand" href="#" style="float: left;">
+                <img alt="LifeTab" src="http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2013/12/6/1386339580074/8e03d095-ae5d-446c-abb4-2865aef7d3bb-460x276.jpeg" height="30px"/>
             </a>
         <!-- </div> -->
-        <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button type="button" class="btn btn-default navbar-btn navbar-right">Log Out</button></a>
+        <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button type="button" class="btn btn-danger navbar-btn navbar-right" style="margin-right: 10px;">Log Out</button></a>
     </div>
 </div>
 <div id="wrapper">
@@ -157,7 +157,7 @@
                     <button type="submit" value="search" class="tfbutton btn btn-danger">Google Search</button>
 				</form>
      		</div>
-            <div style="position: absolute;color: rgba(217, 83, 66, 1); left: 200px;bottom: -500px;font-size: 72px;text-shadow: 0 0 3px #000;border-bottom: 3px solid #FFF;box-shadow: 0 20px 20px #aaa;">LifeTab</div>
+            <div style="position: absolute;color: rgba(217, 83, 66, 1); left: 200px;bottom: -600px;font-size: 16px;letter-spacing: 1px;text-shadow: 0 0 3px #FFF;padding: 0px 80px;border-bottom: 1px solid #FFF;font-family: helvetica;">LifeTab | &copy; 2015 Third Faction</div>
      	</div>
 
 

@@ -17,7 +17,7 @@ hr{
 #wrapper{
   overflow: hidden;
   background-image: url('/static/admin/img/back.jpeg');
-  background-size: 80% 120;
+  background-size: 120%;
   margin: 0;
   padding: 0;
 }
