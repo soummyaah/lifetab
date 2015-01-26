@@ -94,8 +94,8 @@ class TodoListToday(View):
 	def get(self, request):
 		if request.is_ajax():
 			import datetime
-			yesterday = datetime.date.today() - datetime.timedelta(days=1)
-			todo_objs = Todo.objects.filter(due__gt=yesterday).order_by('-modified')
+			today = datetime.date.today() + datetime.timedelta(days=1)
+			todo_objs = Todo.objects.filter(due__lte=today).order_by('-modified')
 			response_data = {'status': 'success'}
 			todos = []
 			for todo_obj in todo_objs:
@@ -115,7 +115,7 @@ class TodoListFuture(View):
 		if request.is_ajax():
 			import datetime
 			today = datetime.date.today() + datetime.timedelta(days=1)
-			todo_objs = Todo.objects.filter(due__gte=today).order_by('-modified')
+			todo_objs = Todo.objects.filter(due__gt=today).order_by('-modified')
 			response_data = {'status': 'success'}
 			todos = []
 			for todo_obj in todo_objs:
@@ -124,10 +124,8 @@ class TodoListFuture(View):
 			response_data['data'] = todos
 			return JsonResponse(response_data)
 		else:
-			data = {
-				'errors': 'AJAX not used',
-			}
-			return HttpResponse(JsonResponse(data))
+			response_data = { 'status': 'success', 'errors': 'AJAX not used', }
+			return JsonResponse(response_data)
 
 class TodoDone(View):
 	def post(self, request):
