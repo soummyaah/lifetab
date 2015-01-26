@@ -98,7 +98,7 @@ class EntryList(View):
 		if request.is_ajax():
 			#import datetime
 			#yesterday = datetime.date.today() - datetime.timedelta(days=1)
-			entry_objs = Entry.objects.all()#.filter(due__gt=yesterday).order_by('-modified')
+			entry_objs = Entry.objects.all().order_by('-modified')
 			response_data = {'status': 'success'}
 			entry = []
 			for entry_obj in entry_objs:

@@ -37,7 +37,12 @@ class AjaxableResponseMixin(object):
 class TodoCreate(View):
 	def post(self, request):
 		if request.is_ajax():
+			# import pdb
+			# pdb.set_trace()
+			# from datetime import datetime
+			# todo = Todo(due=datetime.today())
 			form = AddTodoForm(request.POST)
+			# import pdb
 			if form.is_valid():
 				# print request.POST['title']
 				# from datetime import datetime

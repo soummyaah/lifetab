@@ -154,3 +154,8 @@ label {
     height: 25px;
     width: 25px;
 }
+
+pre{
+    font-family: verdana;
+    font-size: 16px;
+}

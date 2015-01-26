@@ -65,8 +65,9 @@
                 <span>Feeling:&nbsp;</span>
                 <span class="journal-block-feeling"></span>
             </div>
-            
-            <div class="journal-block-content"></div>
+            <pre>
+                <div class="journal-block-content"></div>
+            </pre>
             <input type="hidden" class="journal-block-isprotected" value=""/>
         </div>
       </div>
@@ -104,6 +105,7 @@
                     <div class="form-group">
                         {% csrf_token %}
                         <input type="text" name="title" placeholder="What do you want to do?"/><br>
+                        <input type="text" name="due" style="display:none"/><br>
                         <input type="submit" style="display:none"/>
                     </div>
                 </form>
@@ -342,6 +344,29 @@
     $(function() {
         // bind 'myForm' and provide a simple callback function 
         $('#today-create').ajaxForm({
+            beforeSubmit: function(formData, jqForm, options){
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth()+1; //January is 0!
+
+                var yyyy = today.getFullYear();
+                if(dd<10){
+                    dd='0'+dd;
+                } 
+                if(mm<10){
+                    mm='0'+mm;
+                } 
+                var today = mm+'/'+dd+'/'+yyyy;
+                for (var i=0; i < formData.length; i++) { 
+                    if (formData[i].name == "due") {
+                        formData[i].value = today; 
+                        // alert('Please enter a value for both Username and Password'); 
+                        // return false; 
+                    } 
+                } 
+                var queryString = $.param(formData); 
+                console.log(queryString);
+            },
             success: function(response){
                 console.log(JSON.stringify(response));
                 if(response.status == "success"){
@@ -366,7 +391,7 @@
             error: function(){
             }
         });
--
+
 
 
 
@@ -451,7 +476,7 @@
                  alert(response.status);
             });
 
-        $("#future-date").datepicker({'minDate': '+1d', 'defaultDate': '+1d'});
+        $("#future-date").datepicker({'minDate': '+1d','defaultDate': '+1d'});
 
     }); 
 
