@@ -104,7 +104,7 @@
     <div class="row" style="padding:2% 2%;">
      	<div id="left-section" class="col-md-4">
             <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
-         		<div id="today-box" class="sticky taped2">
+         		<div id="today-box" class="sticky">
          			<div class="heading">
                         <h3>TO-DOS</h3>
          			</div>
@@ -116,7 +116,7 @@
                         </div>
                     </form>
                     <div id="samples">
-                        <form action="{% url 'todo:done' %}" id="today-create" method="post" class="todo-block-sample">
+                        <form action="{% url 'todo:done' %}" method="post" class="todo-block-sample">
                             {% csrf_token %}
                             <input type="submit" value="X"/>
                             <input type="hidden" class="todo-block-id" name="id" value="" />
@@ -130,15 +130,20 @@
          		</div>
             </div>
             <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
-         		<div id="future-box" class="sticky taped3">
+         		<div id="future-box" class="sticky">
          			<div class="heading">
          				<strong>FUTURE</strong>
          			</div>
-         				<form>
-     						<input type="text"/><br>
-                            <input type="submit" style="display:none">
-         				</form>
-         				
+                    <form action="{% url 'todo:create' %}" id="future-create" method="post">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input type="text" name="title" placeholder="What do you want to do?"/><br>
+                            <input type="submit" style="display:none"/>
+                        </div>
+                    </form>
+                    <ul id="future-ul">
+                        <div id="todo-futures"></div>
+                    </ul>
          		</div>
             </div>
      	</div>
@@ -404,6 +409,64 @@ $('#test2').BootSideMenu({side:"right"});
             .fail(function(response){
                 alert(response.status);
             });       
+
+
+        // bind 'myForm' and provide a simple callback function 
+        $('#future-create').ajaxForm({
+            success: function(response){
+                console.log(JSON.stringify(response));
+                if(response.status == "success"){
+                    var todoid = response.data.id;
+                    var title = response.data.title;
+                    // console.log('id:' + todoid + ', title' + title);
+                    var new_todo = $('.todo-block-sample')
+                                        .clone()
+                                        .removeClass('todo-block-sample')
+                                        .addClass('todo-block');
+                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-title').html(title);
+                    // console.log(new_todo.html());
+                    new_todo.prependTo('#todo-futures');
+                    new_todo.hide().fadeIn('slow');
+                    attachDoneListeners(new_todo);
+                }else{
+                    console.log(JSON.stringify(response.errors));
+                }
+                $('#future-create').resetForm();
+            },
+            error: function(){
+            }
+        });
+-
+
+
+
+        // fetch today's stuff
+        $.get('/todo/future')
+            .done(function(response){
+                // console.log(JSON.stringify(response))
+                var block = $('#today-futures');
+                block.html('');
+                var len = response.data.length;
+                //console.log(len);
+                for(var i=0; i<len; i++){
+                    todoid = response.data[i].id;
+                    title = response.data[i].title;
+                    var new_todo = $('.todo-block-sample')
+                                        .clone()
+                                        .removeClass('todo-block-sample')
+                                        .addClass('todo-block')
+                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.find('.todo-block-title').html(title);
+                    new_todo.appendTo('#todo-futures');
+                    attachDoneListeners(new_todo);
+                }
+            })
+            .fail(function(response){
+                 alert(response.status);
+            });
+
+
 
     }); 
 
