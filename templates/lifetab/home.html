@@ -175,9 +175,9 @@
                             <input type="hidden" name="id" value=""/>
                             {{ journal_form.as_table }}
                             <tr><td colspan="2" style="text-align:center;">
-                                <input type="submit" style="padding: 3px 25px;" class="btn btn-danger" value="Add entry" id="journal-submit-button">
-                                <i style="padding: 3px 25px;margin-left: 40px;" class="btn btn-danger" onclick="javascript:$(this).closest('form').clearForm();">New Entry</i>
-                                <i style="padding: 3px 25px;margin-left: 40px;" class="btn btn-danger" onclick="javascript:getJournalEntries();">Open All Journal Entries</i>
+                                <input type="submit" style="padding: 3px 3%;" class="btn btn-danger" value="Save Entry" id="journal-submit-button">
+                                <i style="padding: 3px 3%;margin: 0 1%;font-style: normal;" class="btn btn-danger" onclick="javascript:$(this).closest('form').clearForm();">New Entry</i>
+                                <i style="padding: 3px 3%;margin: 0 1%;" class="btn btn-danger" onclick="javascript:getJournalEntries();">Open All Journal Entries</i>
                             </td></tr>
                         </table>
                     {% endif %}
@@ -541,7 +541,7 @@
                     $("#journal-message").hide().html(ht).fadeIn('fast').delay(3000).hide('slow');
                 }
                 $('#today-create').clearForm();
-                $('#journal-submit-button').attr('value', 'Add Entry').prop('disabled', false);
+                $('#journal-submit-button').attr('value', 'Save Entry').prop('disabled', false);
             },
             error: function(response){
                 alert('An error occurred. Error code: ' + response.status);
