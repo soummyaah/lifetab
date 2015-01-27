@@ -113,6 +113,8 @@ class EntryList(View):
 			return HttpResponse(JsonResponse(data))
 
 class EntryDetail(View):
+	print "Entry Detail Called"
+	pass
 	#Not compelete
 	# def post(self, request):
 	# 	if request.is_ajax():
