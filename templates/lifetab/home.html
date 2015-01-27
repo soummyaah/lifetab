@@ -39,6 +39,7 @@
   // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
   // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
+  print "Bleh";
   modal.find('.modal-title').text('New message to ' + recipient)
   modal.find('.modal-body input').val(recipient)
 })
@@ -85,17 +86,25 @@
     <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
+    <div id="journal-detail" class="modal-content">
+      <div class="modal-header journal-block-title">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Modal title</h4>
       </div>
       <div class="modal-body">
-        ...
+        <div >
+            <div class="journal-feeling-wrapper">
+                <span>Feeling:&nbsp;</span>
+                <span class="journal-block-feeling"></span>
+            </div>
+            
+            <div class="journal-block-content"></div>
+            <input type="hidden" class="journal-block-isprotected" value=""/>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-primary journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
+        <button type="button" class="btn btn-danger">Delete</button>
       </div>
     </div>
   </div>
@@ -187,9 +196,9 @@
         </div>
         <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
             <div id="journal-wrapper">
-                <div id="your-journals">
+                <div id="olaf-your-journals">
         <!-- Sample div for Journal display -->
-        <div class="journal-block-sample">
+        <li class="list-group-item journal-block-sample"  data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
             <h3 class="journal-block-title"></h3>
             <!-- <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button> -->
             <div class="journal-feeling-wrapper">
@@ -198,26 +207,17 @@
             </div>
             <div class="journal-block-content"></div>
             <input type="hidden" class="journal-block-isprotected" value=""/>
-        </div>
+        </li>
 
 
         <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
         <button id="get-journals-panel-button" onclick="javascript:$(this).html('Fetching...');openJournalsPanel()">Get journals-Panel</button>
         
-        <div id="journal-list">
+        <div id="olaf-journal-list">
             <p>Loading...</p>
         </div>
     
-        <div id="journal-detail">
-            <h3 class="journal-block-title"></h3>
-            <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
-            <div class="journal-feeling-wrapper">
-                <span>Feeling:&nbsp;</span>
-                <span class="journal-block-feeling"></span>
-            </div>
-            <div class="journal-block-content"></div>
-            <input type="hidden" class="journal-block-isprotected" value=""/>
-        </div>
+        
     </div>
             
         </div>    
@@ -233,16 +233,18 @@
     <div class="panel-heading">All Your Journals
         <div class="btn-close btn btn-default" style="float:right;" onclick="closeJournalsPanel()">x</div>
     </div>
-    <ul class="list-group"><!-- <table class="table table-striped"> -->
-        <li class="list-group-item"><!-- <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
-  Launch demo modal @mdo
-</button> --><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button></li>
-        <li class="list-group-item"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Open modal for @fat</button></li>
-        <li class="list-group-item"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@twbootstrap">Open modal for @twbootstrap</button></li>
-        <li class="list-group-item">Porta ac consectetur ac</li>
-        <li class="list-group-item">Vestibulum at eros</li>
-    <!-- </table>     -->
-    </ul>
+    <div id="your-journals">
+        <ul class="list-group" id="journal-list"><!-- <table class="table table-striped"> -->
+            <li class="list-group-item"><!-- <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" data-whatever="@mdo">
+      Launch demo modal @mdo
+    </button> --><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button></li>
+            <li class="list-group-item"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Open modal for @fat</button></li>
+            <li class="list-group-item"><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@twbootstrap">Open modal for @twbootstrap</button></li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+        <!-- </table>     -->
+        </ul>
+    </div>
 </div>
 
 
@@ -496,19 +498,20 @@ $('#test2').BootSideMenu({side:"right"});
                 for(var i=0; i<len; i++){
                     jid = response.data[i].id;
                     title = response.data[i].title;
-                    content  = response.data[i].content;
+                    // content  = response.data[i].content;
                     feeling  = response.data[i].feeling;
-                    is_protected = response.data[i].is_protected;
+                    // is_protected = response.data[i].is_protected;
                     var new_entry = $('.journal-block-sample')
                                         .clone()
                                         .removeClass('journal-block-sample')
                                         .addClass('journal-block')
                     new_entry.find('.journal-block-id').attr('data-edit', jid);
                     new_entry.find('.journal-block-title').html(title);
-                    new_entry.find('.journal-block-content').html(content);
+                    // new_entry.find('.journal-block-content').html(content);
                     new_entry.find('.journal-block-feeling').html(feeling);
-                    new_entry.find('.journal-block-isprotected').attr('value', is_protected);
+                    // new_entry.find('.journal-block-isprotected').attr('value', is_protected);
                     new_entry.appendTo('#journal-list');
+                    openJournalsPanel();
                 }
             })
             .fail(function(response){
@@ -564,21 +567,11 @@ $('#test2').BootSideMenu({side:"right"});
     }); 
 </script> 
 <style>
-    #your-journals{
-        margin: 15px;
-        padding: 10px;
-        background-color: maroon;
-        color: gray;
-
-    }
     .journal-block-sample{
         display: none;
     }
     .journal-block{
         display: block;
-    }
-    .journal-block:hover{
-        background-color: red;
     }
     #journal-message{
         padding: 15px;
@@ -589,8 +582,8 @@ $('#test2').BootSideMenu({side:"right"});
     #journal-message span{
         font-style: italic;
     }
-    #allJournalEntries{
-
+    #your-journals{
+        overflow: scroll;
     }
 </style>
 {% endblock %}
