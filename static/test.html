@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boot Side Menu jQuery Plugin Demo</title>
+
+  <!-- Bootstrap -->
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+
+  <link href="css/BootSideMenu.css" rel="stylesheet">
+  <!-- HTML5 shim e Respond.js per rendere compatibile l'HTML 5 in IE8 -->
+  <!-- ATTENZIONE: Respond.js non funziona se la pagina viene visualizzata in locale file:// -->
+<!--[if lt IE 9]>
+<script src="js/html5shiv.min.js"></script>
+<script src="js/respond.min.js"></script>
+<![endif]-->
+
+<style type="text/css">
+  .user{
+    padding:5px;
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+
+  <!--Test -->
+<!--   <div id="test">
+    <h2>Boot Side Menu</h2>
+    <div class="list-group">
+      <a href="#" class="list-group-item active">Cras justo odio</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+      <a href="#subTest" class="list-group-item">Sub menù test</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta Porta Porta sdaf s fs hfuis uif ac consectetur ac</a>
+    </div>
+
+    <div class="list-group submenu" id="subTest">
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#subTestSub" class="list-group-item">Sub di Sub</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+    </div> 
+
+    <div class="list-group submenu" id="subTestSub">
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+    </div> 
+
+  </div>
+ -->  <!--/Test -->
+
+  <!--Test 2 -->
+  <div id="test2">
+    <div class="list-group">
+      <a href="#" class="list-group-item active">Cras justo odio</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+      <a href="#" class="list-group-item">Vestibulum at eros</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+      <a href="#" class="list-group-item">Vestibulum at eros</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Morbi leo risus</a>
+      <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+      <a href="#" class="list-group-item">Vestibulum at eros</a>
+      <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
+      <a href="#" class="list-group-item">Soumya</a>
+      <a href="#subRight" class="list-group-item">Sub Menu</a>
+      <a href="#" class="list-group-item">Vestibulum at eros</a>
+    </div>
+  </div>
+   <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!--<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
+  <script src="js/BootSideMenu.js"></script>
+
+  <script type="text/javascript">
+    $('#test2').BootSideMenu({side:"right"});
+  </script>
+<!--<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36251023-1']);
+  _gaq.push(['_setDomainName', 'jqueryscript.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+--></body>
+</html>
