@@ -27,10 +27,10 @@ class EntryCreate(View):
 				response_data = {'status': 'error', 'errors': form.errors}
 			return JsonResponse(response_data)
 		else:
-		 	data = {
-		 		'errors': 'AJAX not used',
-		 	}
-		 	return JsonResponse('status': 'error', data)
+			response_data = {
+				'status': 'error',
+				'errors': 'AJAX not used'}
+			return JsonResponse(response_data)
 
 class EntryUpdate(View):
 	def post(self, request, entry_id):
@@ -106,10 +106,10 @@ class EntryList(View):
 			response_data['data'] = entry
 			return JsonResponse(response_data)
 		else:
-			data = {
-				'errors': 'AJAX not used',
-			}
-			return HttpResponse(JsonResponse('status':'error',data))
+			# data = {
+			# 	'errors': 'AJAX not used'
+			# }	
+			return HttpResponse(JsonResponse({'status':'error', 'errors': 'Not fetched by AJAX'}))
 
 class EntryDetail(View):
 	def post(self, request):
