@@ -10,7 +10,7 @@ import json
 # Main class based methods to be used
 class EntryCreate(View):
 	def post(self, request):
-		if request.is_ajax():
+		#if request.is_ajax():
 			form = AddEntryForm(request.POST)
 			if form.is_valid():
 				# print request.POST['title']
@@ -26,11 +26,11 @@ class EntryCreate(View):
 			else:
 				response_data = {'status': 'error', 'errors': form.errors}
 			return JsonResponse(response_data)
-		else:
-		 	data = {
-		 		'errors': 'AJAX not used',
-		 	}
-		 	return JsonResponse(data)
+		# else:
+		 	# data = {
+		 		# 'errors': 'AJAX not used',
+		 	# }
+		 	# return JsonResponse(data)
 
 class EntryUpdate(View):
 	def post(self, request, entry_id):

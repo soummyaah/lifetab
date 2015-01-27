@@ -14,29 +14,41 @@
     .todo-done{
         text-decoration: line-through;
     }
+    #journals-panel{
+        background-color: #555;
+        height: 100%;
+        width: 430px;
+        position: absolute;
+        right: 0px;
+        top: 55px;
+    }
 </style>
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- <div class="navbar-header"> -->
+            <a class="navbar-brand" href="#">
+                <img alt="LifeTab" src="http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2013/12/6/1386339580074/8e03d095-ae5d-446c-abb4-2865aef7d3bb-460x276.jpeg" height="30px">
+            </a>
+        <!-- </div> -->
+        <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button type="button" class="btn btn-default navbar-btn navbar-right">Log Out</button></a>
+    </div>
+</div>
 <div id="wrapper">
- 	<div class="row" id="header">
-        <div class="col-md-2 col-md-push-10">
-            <div style="width:60%; margin: 0% 0px 0% 50%; padding: 2%;">
-
-                <a href="{% url 'auth:logout' %}?next={{ request.path }}"><button class="btn-info btn" type ="submit">LOGOUT</button></a>
-            </div>
- 		</div>
- 	</div>
     <hr>
     <div class="row" style="padding:2% 2%;">
      	<div id="left-section" class="col-md-4">
-            <div class="row" style="padding:0%;margin:0% 5% 15% 5%;">
+            <div class="row" style="padding:0%; margin:0% 5% 15% 5%;">
          		<div id="today-box" class="sticky taped2">
          			<div class="heading">
-                        <strong>TO-DOS</strong>
+                        <h3>TO-DOS</h3>
          			</div>
-                        <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                    <form action="{% url 'todo:create' %}" id="today-create" method="post">
+                        <div class="form-group">
                             {% csrf_token %}
                             <input type="text" name="title" placeholder="What do you want to do?"/><br>
                             <input type="submit" style="display:none"/>
-                        </form>
+                        </div>
+                    </form>
                     <div id="samples">
                         <form action="{% url 'todo:done' %}" id="today-create" method="post" class="todo-block-sample">
                             {% csrf_token %}
@@ -80,12 +92,13 @@
 
 
      	<div id="right-section" class="col-md-4">
-     		<div id="add-journal">
+     		<div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
+            <div id="add-journal">
      			<form id="journal-create" action="{% url 'journal:create' %}" method="post">
                 {% csrf_token %}
                 <div id="journal-message"></div>
                 {% if journal_form %}
-                    <table>
+                    <table class="table table-striped">
                         {{ journal_form.as_table }}
          				<!-- <textarea rows="8" cols="40" name="content" placeholder="Add a diary entry or a note here"></textarea> -->
                         <tr><td><input type="submit" value="Add entry" id="journal-submit-button"></td></tr>
@@ -99,14 +112,10 @@
                         </form>	 -->
      			</form>
      		</div>
-     	</div>
-    </div>
-</div>
-
-
-<!-- The Journal panel for slide in and slide out from the right -->
-<div id="journal-wrapper">
-    <div id="your-journals">
+        </div>
+        <div class="row" style="padding:0%;margin:0% 5% 5% 5%;">
+            <div id="journal-wrapper">
+                <div id="your-journals">
         <!-- Sample div for Journal display -->
         <div class="journal-block-sample">
             <h3 class="journal-block-title"></h3>
@@ -120,22 +129,128 @@
         </div>
 
 
-        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();">Get journals</button>
+        <button id="get-journals-button" onclick="javascript:$(this).html('Fetching...');getJournalEntries();showEntries()">Get journals</button>
+        <button id="get-journals-panel-button" onclick="javascript:$(this).html('Fetching...');openJournalsPanel()">Get journals-Panel</button>
+        
         <div id="journal-list">
             <p>Loading...</p>
         </div>
-    </div>
-
-    <div id="journal-detail">
-        <h3 class="journal-block-title"></h3>
-        <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
-        <div class="journal-feeling-wrapper">
-            <span>Feeling:&nbsp;</span>
-            <span class="journal-block-feeling"></span>
+    
+        <div id="journal-detail">
+            <h3 class="journal-block-title"></h3>
+            <button class="journal-block-id" onclick="javascript:editEntry(this);" data-edit="">Edit</button>
+            <div class="journal-feeling-wrapper">
+                <span>Feeling:&nbsp;</span>
+                <span class="journal-block-feeling"></span>
+            </div>
+            <div class="journal-block-content"></div>
+            <input type="hidden" class="journal-block-isprotected" value=""/>
         </div>
-        <div class="journal-block-content"></div>
-        <input type="hidden" class="journal-block-isprotected" value=""/>
     </div>
+            
+        </div>    
+     	</div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" id="journals-panel">
+    <div class="panel-heading">All Your Journals
+        <div class="btn-close btn btn-default" style="float:right;" onclick="close-journals-panel()">x</div>
+    </div>
+    <ul class="list-group"><!-- <table class="table table-striped"> -->
+        <li class="list-group-item"><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+  Launch demo modal
+</button></li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Morbi leo risus</li>
+        <li class="list-group-item">Porta ac consectetur ac</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+    <!-- </table>     -->
+    </ul>
+</div>
+
+
+<!-- SLIDE IN PANEL COPIED -->
+<!-- <div class="panel panel-default"  id="test2">
+ -->  <!-- Default panel contents -->
+<!--   <div class="panel-heading">All Your Journals</div>
+  <div class="panel-body">
+    <p>...</p>
+</div>
+<span class="journal-block-feeling"></span>
+  <!-- List group -->
+<!--  <ul class="list-group">
+    <li class="list-group-item"><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-targetk2222222222222222222="#myModal">
+  Launch demo modal
+</button>
+</li>
+    <li class="list-group-item">Dapibus ac facilisis in</li>
+    <li class="list-group-item">Morbi leo risus</li>
+    <li class="list-group-item">Porta ac consectetur ac</li>
+    <li class="list-group-item">Vestibulum at eros</li>
+  </ul>
+</div>
+
+
+<!-- Modal -->
+<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+ -->
+<!-- The Journal panel for slide in and slide out from the right -->
+
+<script type="text/javascript">
+// function showEntries() {
+//     if(document.getElementById("journals-panel").style.display=="block")
+//         document.getElementById("journals-panel").style.display="none";
+//     else
+//         document.getElementById("journals-panel").style.display="block";
+// }
+
+function openJournalsPanel() {
+    document.getElementById("journals-panel").style.display=="block";
+}
+
+function close-journals-panel() {
+    document.getElementById("journals-panel").style.display=="none";
+}
+$('#test2').BootSideMenu({side:"right"});
+</script>
+    
 </div>
 
 <p>
@@ -144,47 +259,15 @@
 
         <div class="container">
       <div class="header">
-<!--         <nav>
-          <ul class="nav nav-pills pull-right">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="#">About</a></li>
-            <li role="presentation"><a href="#">Contact</a></li>
-          </ul>
-        </nav>
- -->        <h3 class="text-muted">*Logo*</h3>
+        <h3 class="text-muted">*Logo*</h3>
       </div>
 
     <div class="jumbotron">
         <h1>LifeTab</h1>
         <p class="lead">The lifelogging app that let's you keep your thoughts in one place.</p>
-        <p><!-- <a class="btn btn-lg btn-success" href="#" role="button">Sign up today</a> -->
-            <a class="btn btn-lg btn-success" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" role="button"><!-- <button type="submit" class="btn-danger btn-lg"> -->Login with Google<!-- </button> --></a></p>
+        <p>
+            <a class="btn btn-lg btn-success" href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" role="button">Login with Google</a></p>
       </div>
-
-
-    <!-- <div class="content">
-       <div class="row">
-            <div class="col-lg-6 col-lg-push-3">
-                <div class="alignment">
-                    <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"><button type="submit" class="btn-danger btn-lg">Login with Google</button></a>
-                </div>
-           </div>
-        </div>
-        <hr>
-        <div class="row">
-           <div class="col-lg-6 col-lg-push-3">
-            <div class="alignment">
-               <form action="/login" method="post"><h3>Use normal login</h3>
-                    {% csrf_token %}
-                        <br><input type="text" name="username"/><br>
-                        <input type="password" name="password"/><br>
-                        <input type="submit" value="Login"/><br>
-                </form>
-             </div>
-            </div>
-        </div>
-    </div>
- -->
     <footer class="footer">
         <p>&copy; ThirdFaction</p>
       </footer>
@@ -212,7 +295,7 @@
                                         .clone()
                                         .removeClass('todo-block-sample')
                                         .addClass('todo-block');
-                    new_todo.find('.todo-block-id').attr('value', todoid);
+                    new_todo.function() {};ind('.todo-block-id').attr('value', todoid);
                     new_todo.find('.todo-block-title').html(title);
                     // console.log(new_todo.html());
                     new_todo.prependTo('#todo-todays');
@@ -224,10 +307,9 @@
                 $('#today-create').resetForm();
             },
             error: function(){
-
             }
         });
-
+-
 
         function attachDoneListeners(elem){
             $(elem).ajaxForm({
@@ -389,6 +471,9 @@
     }
     #journal-message span{
         font-style: italic;
+    }
+    #allJournalEntries{
+
     }
 </style>
 {% endblock %}
